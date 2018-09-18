@@ -5,14 +5,10 @@
 struct grafo{
 	LIS_tppLista vertices;
 	LIS_tppLista origens;
-	//chaves ja utilizadas
-	LIS_tppLista chaves;
 	Vertice corrente;
 };
 
 /***** Prototipos das funcoes encapsuladas no modulo *****/
-
-static char chaveNoGrafo(Grafo g, int chave);
 
 
 /************************Codigo das funcoes exportadas pelo modulo******************************/
@@ -42,22 +38,24 @@ void GRP_DestruirGrafo(Grafo* endereco){
 
 GRP_tpCondRet GRP_InserirVertice(Grafo grafo, Vertice vertice){
 	int chave = 0;
+	GRP_tpCondRet cond;
+	Vertice v = NULL;
 	if(!grafo) return GRP_CondRetGrafoNaoExiste;
 	if(!vertice) return GRP_CondRetOK;
 
 	//listas de ENDERECOS de vertices
 	if(!grafo->vertices) grafo->vertices = LIS_CriarLista((void(*)(void *pDado))VER_DestruirVertice);
 	if(!grafo->origens) grafo->origens = LIS_CriarLista((void(*)(void *pDado))VER_DestruirVertice);
-	//lista de enderecos de chaves, que referenciam as chaves dos vertices. Nao e' necessario apagar as chaves junto com a lista.
-	if(!grafo->chaves) grafo->chaves = LIS_CriarLista(NULL);
 	//verificando a criacao correta de todos os dados
-	if(!grafo->vertices || !grafo->origens || !grafo->chaves) return GRP_CondRetFaltouMemoria;
+	if(!grafo->vertices || !grafo->origens) return GRP_CondRetFaltouMemoria;
 
 	//verifica se a chave do vertice ja' existe no grafo. Nesse caso retorna uma condicao de erro.
 	VER_getChave(vertice, &chave);
-	if(chaveNoGrafo(grafo, chave)) return GRP_CondRetErroEstrutura;
+	cond = VerticedeChave(grafo, chave, &v);
+	if(cond == GRP_CondRetOK) return GRP_CondRetErroEstrutura;
 
-	//adiciona o vertice e seus vizinhos na lista de vertices, e sua chave na lista de chaves.
+	//adiciona o vertice e seus vizinhos na lista de vertices.
+
 
 	//verifica se o vertice e' uma origem nova percorrendo a lista atual de origens e determinando se o vertice a ser inserido
 	//pode ser alcancado a partir de alguma origem. Se ele nao puder, sera uma nova origem.
@@ -66,19 +64,33 @@ GRP_tpCondRet GRP_InserirVertice(Grafo grafo, Vertice vertice){
 	return GRP_CondRetOK;
 }
 
-/*****  Codigo das funcoes encapsuladas no modulo  *****/
 //assertiva de entrada: o elemento corrente da lista de chaves do grafo esta na sua posicao inicial
 //nota: nao e' possivel aqui utilizar a funcao de procura da lista, pois ele nao compara valores mas apenas ponteiros.
-static char chaveNoGrafo(Grafo g, int chave){
-	int corr = 0;
+GRP_tpCondRet VerticedeChave(Grafo grafo, int chave, Vertice* endereco){
+	Vertice corr = NULL;
+	int chaveCorr = 0;
 	LIS_tpCondRet cond = LIS_CondRetOK;
-	if(!g || !g->chaves) return 0;
+	if(!grafo) return GRP_CondRetGrafoNaoExiste;
+	if(!grafo->vertices) return GRP_CondRetGrafoVazio;
+
 	while(cond != LIS_CondRetFimLista){
 		//obter valor atual
-		corr = *((int*) LIS_ObterValor(g->chaves));
-		if(corr == chave) return 1;
+		corr = *((Vertice*) LIS_ObterValor(grafo->vertices));
+		//se nao houver a lista estara vazia. Neste caso, o grafo tambem.
+		if(!corr) return GRP_CondRetGrafoVazio;
+		//comparar as chaves para ver se achou
+		VER_getChave(corr, &chaveCorr);
+		if(chaveCorr == chave){
+			*endereco = corr;
+			return GRP_CondRetOK;
+		}
 		//pular para o proximo elemento da lista
-		cond = LIS_AvancarElementoCorrente(g->chaves, 1);
+		cond = LIS_AvancarElementoCorrente(grafo->vertices, 1);
+		if(cond == LIS_CondRetListaVazia) return GRP_CondRetGrafoVazio;
 	}
-	return 0;
+	//caso o vertice nao seja encontrado, um erro de estrutura e' retornado.
+	return GRP_CondRetErroEstrutura;
 }
+
+/*****  Codigo das funcoes encapsuladas no modulo  *****/
+
