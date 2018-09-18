@@ -76,12 +76,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Fontes\grafo.c" />
+    <ClCompile Include="..\Fontes\LISTA.C" />
+    <ClCompile Include="..\Fontes\TESTLIS.C" />
     <ClCompile Include="..\Fontes\vertice.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Fontes\GENERICO.H" />
     <ClInclude Include="..\Fontes\grafo.h" />
     <ClInclude Include="..\Fontes\LERPARM.H" />
+    <ClInclude Include="..\Fontes\LISTA.H" />
+    <ClInclude Include="..\Fontes\TST_ESPC.H" />
     <ClInclude Include="..\Fontes\vertice.h" />
   </ItemGroup>
   <ItemGroup>

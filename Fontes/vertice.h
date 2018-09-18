@@ -15,8 +15,9 @@
 *
 *  $HA Historico de evolucao:
 *     Versao  Autor    Data     Observacoes
-*	  1.1	   lcrv   18/9/2018 Correcao das interfaces
-*       1.00   lcrv   7/09/2018 Inicio do desenvolvimento
+*	  1.1	  lcrv   18/9/2018 Correcao das interfaces
+*       1.0   lcrv   7/09/2018 Inicio do desenvolvimento
+*  Para maiores detalhes do historico ver controle de versao no GitHub, referenciado no LeiaMe do projeto.
 *
 *  $ED Descricao do modulo
 *     Este modulo implementa um conjunto simples de funcoes para criar vertices e arestas de um grafo.
@@ -28,6 +29,22 @@
 *	Uma aresta tem origem, destino e rotulo.
 *	Atualmente o peso de arestas nao sera implementado mas
 *	esta modificacao podera ser implementada no futuro.
+*	
+*	O controle da destruicao do valor de um vertice a ser excluido
+*     e' realizado por uma funcao fornecida pelo usuario.
+*
+*     Cada vertice referencia uma funcao que determina como devem ser
+*     desalocados o dado nele contido pelo campo "valor".
+*
+*     A funcao de liberacao do valor contido nos vertices deve
+*        assegurar a liberacao de todos os espacos referenciados pelo
+*        mesmo valor.
+*        Esta funcao e' chamada antes de se desalocar um vertice.
+*        Caso nao seja necessario desalocar o valor referenciado pelo
+*        vertice, o ponteiro para a funcao de liberacao podera ser NULL.
+*        Caso o vertice seja a unica ancora do valor referenciado,
+*        esta funcao deve promover a destruicao (free) desse valor e
+*        de todos os dados nele ancorados.
 *
 ***************************************************************************/
 
@@ -87,13 +104,18 @@ typedef enum {
 *  $FC Funcao: VER Criar vertice
 *
 *	$EP Parametros
-*     $P endereco   - endereco do vertice a ser criado.
-*	$P valor	  - valor do vertice.
-*	$P chave	  - chave do vertice.
+*     $P endereco     - endereco do vertice a ser criado.
+*	$P valor	    - valor do vertice.
+*	$P chave	    - chave do vertice.
+*	$P ExcluirValor - ponteiro para a funcao que processa a
+*				exclusao do valor referenciado pelo vertice.
+*				Ver descricao do modulo.
 *
 *  $ED Descricao da funcao
 *     Cria um novo vertice.
 *     Caso ja exista um vertice, este sera destruido.
+*	Caso seja passado um endereco inexistente nada sera feito,
+*	e sera retornada uma condicao de retorno OK.
 *
 *  $FV Valor retornado
 *     VER_CondRetOK
@@ -101,7 +123,7 @@ typedef enum {
 *
 ***********************************************************************/
 
-VER_tpCondRet VER_CriarVertice(Vertice* endereco, void* valor, int chave);
+VER_tpCondRet VER_CriarVertice(Vertice* endereco, void* valor, int chave, void(*ExcluirValor)(void * valor));
 
 /***********************************************************************
 *
@@ -114,7 +136,7 @@ VER_tpCondRet VER_CriarVertice(Vertice* endereco, void* valor, int chave);
 *  $FV Valor retornado
 *     VER_CondRetOK
 *	VER_CondRetVerticeNaoExiste
-*	VER_CondRetArestaNaoExiste - caso o vetor seja nulo.
+*	VER_CondRetArestaNaoExiste - caso a aresta seja nula.
 *	VER_CondRetErroInsercao	   - caso nem origem nem destino da aresta sejam iguais a chave do vertice.
 *     VER_CondRetFaltouMemoria
 *
@@ -133,7 +155,7 @@ VER_tpCondRet VER_InserirAresta(Vertice vertice, Aresta aresta);
 *  $FV Valor retornado
 *     VER_CondRetOK
 *	VER_CondRetVerticeNaoExiste
-*	VER_CondRetErroInsercao - caso o tipo seja nulo.
+*	VER_CondRetErroInsercao - caso o tipo nao exista.
 *
 ***********************************************************************/
 
@@ -201,7 +223,7 @@ VER_tpCondRet VER_getValor(Vertice vertice, void** enderecoValor);
 
 /***********************************************************************
 *
-*  $FC Funcao: VER Visitado
+*  $FC Funcao: VER Visitado?
 *
 *	$EP Parametros
 *     $P vertice  - o vertice a testar.
@@ -210,6 +232,7 @@ VER_tpCondRet VER_getValor(Vertice vertice, void** enderecoValor);
 *  $ED Descricao da funcao
 *	Verifica se o vertice ja foi visitado ou nao.
 *	Se nao houver vertice gera uma condicao de erro.
+*	Se o endereco e' nulo, nao faz nada e retorna OK.
 *	Deposita 1 no endereco especificado caso 
 *	o vertice ja tenha sido visitado, do contrario 0.
 *
@@ -233,6 +256,7 @@ VER_tpCondRet VER_Visitado(Vertice vertice, int* endereco);
 *  $ED Descricao da funcao
 *	Deposita a chave do vertice no endereco especificado.
 *	Se nao houver vertice gera uma condicao de erro.
+*	Se o endereco e' nulo, nao faz nada e retorna OK.
 *
 *  $FV Valor retornado
 *     VER_CondRetOK
@@ -253,6 +277,7 @@ VER_tpCondRet VER_getChave(Vertice vertice, int* endereco);
 *  $ED Descricao da funcao
 *	Deposita o tipo do vertice no endereco especificado.
 *	Se nao houver vertice gera uma condicao de erro.
+*	Se o endereco e' nulo, nao faz nada e retorna OK.
 *
 *  $FV Valor retornado
 *     VER_CondRetOK
@@ -260,10 +285,9 @@ VER_tpCondRet VER_getChave(Vertice vertice, int* endereco);
 *
 ***********************************************************************/
 
-VER_TipoVer VER_getTipo(Vertice vertice, VER_TipoVer* endereco);
+VER_tpCondRet VER_getTipo(Vertice vertice, VER_TipoVer* endereco);
 
 /************************Fim de funcoes adicionais de VERTICE*****************************/
-
 
 /************************Funcoes de acesso a estrutura Aresta*****************************/
 
@@ -280,6 +304,9 @@ VER_TipoVer VER_getTipo(Vertice vertice, VER_TipoVer* endereco);
 *  $ED Descricao da funcao
 *     Cria uma nova aresta.
 *	Esta aresta e' independente de qualquer vertice especifico.
+*	Caso ja exista uma aresta, esta sera destruida.
+*	Caso seja passado um endereco inexistente nada sera feito,
+*	e sera retornada uma condicao de retorno OK.
 *
 *
 *  $FV Valor retornado
@@ -314,7 +341,8 @@ void VER_DestruirAresta(Aresta* endereco);
 *	$P chaves	- endereco do ponteiro para array de inteiros onde serao colocaos as chaves da aresta
 *	
 *  $ED Descricao da funcao
-*	Retorna os valores origem e destino das chaves dos vertices da aresta nas respectivas posicoes 0 e 1 do parametro chaves
+*	Retorna os valores origem e destino das chaves dos vertices da aresta nas respectivas posicoes 0 e 1 do parametro chaves.
+*	Faz nada caso o parametro chaves seja nulo, e retorna OK.
 *
 *
 *  $FV Valor retornado
@@ -337,6 +365,8 @@ VER_tpCondRet VER_GetChaves(Aresta aresta, int** chaves);
 *  $ED Descricao da funcao
 *	Deposita o rotulo da aresta no endereco especificado.
 *	Se nao houver aresta gera uma condicao de erro.
+*	Caso seja passado um endereco inexistente nada sera feito,
+*	e sera retornada uma condicao de retorno OK.
 *
 *  $FV Valor retornado
 *     VER_CondRetOK

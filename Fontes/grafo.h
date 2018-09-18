@@ -15,9 +15,9 @@
 *
 *  $HA Historico de evolucao:
 *     Versao  Autor    Data     Observacoes
-*	  1.1	   lcrv   18/9/2018 Correcao das interfaces
-*       1.00   lcrv   7/09/2018 Inicio do desenvolvimento
-*
+*	  1.1	  lcrv   18/9/2018 Correcao das interfaces
+*       1.0   lcrv   7/09/2018 Inicio do desenvolvimento
+*  Para maiores detalhes do historico ver controle de versao no GitHub, referenciado no LeiaMe do projeto.
 *  $ED Descricao do modulo
 *     Este modulo implementa um conjunto simples de funcoes para criar e
 *     explorar grafos.
@@ -69,6 +69,8 @@ typedef enum {
 *  $ED Descricao da funcao
 *     Cria um novo grafo vazio.
 *     Caso ja exista um grafo, este sera destruido.
+*	Caso o endereco seja nulo nada sera feito e sera retornado
+*	OK.
 *
 *  $FV Valor retornado
 *     GRP_CondRetOK
@@ -104,13 +106,16 @@ void GRP_DestruirGrafo(Grafo* endereco);
 *
 *  $ED Descricao da funcao
 *	Insere um vertice no grafo.
-*	Caso a chave do vertice ja exista no grafo, faz um update dos outros valores do mesmo.
+*	Caso a chave do vertice ja exista no grafo, nada e' feito e um erro de estrutura e' retornado.
 *	Caso o vertice tenha arestas, todos os nos vizinhos serao inseridos tambem.
+*	Caso o vertice nao exista nada e' feito e OK e' retornado.
+*	
 *
 *  $FV Valor retornado
 *     GRP_CondRetOK
 *	GRP_CondRetGrafoNaoExiste
 *     GRP_CondRetFaltouMemoria
+*	GRP_CondRetErroEstrutura - caso a chave do vertice ja' exista no grafo
 *
 ***********************************************************************/
 

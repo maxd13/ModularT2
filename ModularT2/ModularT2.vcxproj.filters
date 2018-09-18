@@ -21,6 +21,12 @@
     <ClCompile Include="..\Fontes\vertice.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Fontes\LISTA.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Fontes\TESTLIS.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Fontes\grafo.h">
@@ -33,6 +39,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Fontes\LERPARM.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Fontes\LISTA.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Fontes\TST_ESPC.H">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

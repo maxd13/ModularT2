@@ -1,0 +1,14 @@
+- Fazer as imagens dos modelos fisicos de dados utilizados
+- Escrever todas as assertivas estruturais dos modelos
+- Especificar as assertivas de entrada e saida de todas as funcoes de acesso.
+- Verificar a corretude da documentacao ao final do projeto
+- Produzir o LeiaMe.txt
+- Providenciar a entrega do trabalho
+- Testar o modulo lista com um script completo e verificar a documentacao do script
+- Testar o modulo Grafo com script novo e completo
+- Testar o modulo Vertice com script novo e completo
+AVISO: Completo siginifica "Testa todos as condicoes de retorno de todas as funcoes de acesso de um modulo" 
+(exceto a condicao de falta de memoria)
+
+Conforme se vai completando as tarefas, favor escrever neste arquivo, do lado da tarefa completa, com um (Feito por X) e 
+colocar isso na tabela da pasta do google drive tambem.
