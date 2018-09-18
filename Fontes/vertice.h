@@ -1,5 +1,4 @@
 #pragma once
-//#include "Lista.h"
 
 /***************************************************************************
 *
@@ -9,15 +8,15 @@
 *  Letras identificadoras:      VER
 *
 *  Nome da base de software:    Segundo Trabalho de Programacao Modular
-*  Nome alternativo:		  Primeiro trabalho de Inteligencia Artificial
 *
-*  Projeto: Disciplinas INF1777 e INF 1628 / 1301
+*  Projeto: Disciplinas INF 1628 / 1301
 *  Gestor:  DI/PUC-Rio
-*  Autores: avs - Luiz Carlos R Viana
+*  Autores: lcrv - Luiz Carlos R Viana
 *
 *  $HA Historico de evolucao:
 *     Versao  Autor    Data     Observacoes
-*       1.00   avs   7/09/2018 Inicio do desenvolvimento
+*	  1.1	   lcrv   18/9/2018 Correcao das interfaces
+*       1.00   lcrv   7/09/2018 Inicio do desenvolvimento
 *
 *  $ED Descricao do modulo
 *     Este modulo implementa um conjunto simples de funcoes para criar vertices e arestas de um grafo.
@@ -26,17 +25,15 @@
 *	Os tipos de vertice podem ser: inicial, intermediario ou final.
 *     O vertice nunca estara vazio, mas pode ocorrer de nao ter antecessores ou sucessores, sendo desconectado.
 *	Tambem e' possivel que o seu valor seja nulo.
-*	Uma aresta tem origem, destino, peso e rotulo. 
-*	A implementacao deste modulo e' generica e serve para diversas aplicacoes,
-*	tanto as que usam pesos quanto rotulos nas arestas. Fizemos isto para
-*	que pudessemos utilizar o mesmo codigo em trabalhos de duas materias diferentes.
+*	Uma aresta tem origem, destino e rotulo.
+*	Atualmente o peso de arestas nao sera implementado mas
+*	esta modificacao podera ser implementada no futuro.
 *
 ***************************************************************************/
 
 typedef struct vertice* Vertice;
 typedef struct aresta* Aresta;
-//temporario
-typedef void** Lista;
+
 
 /***********************************************************************
 *
@@ -199,8 +196,8 @@ VER_tpCondRet VER_MarcarVisitado(Vertice vertice);
 
 VER_tpCondRet VER_getValor(Vertice vertice, void** enderecoValor);
 
-/************************Funcoes adicionais de VERTICE que nao serao testadas*****************************/
-//Essas funcoes sao implementadas basicamente com um return e assim dispensam testes.
+/************************Funcoes adicionais de VERTICE*****************************/
+
 
 /***********************************************************************
 *
@@ -208,18 +205,22 @@ VER_tpCondRet VER_getValor(Vertice vertice, void** enderecoValor);
 *
 *	$EP Parametros
 *     $P vertice  - o vertice a testar.
+*	$P endereco - o endereco do inteiro no qual colocar o valor.
 *	
 *  $ED Descricao da funcao
 *	Verifica se o vertice ja foi visitado ou nao.
-*	Se nao houver vertice retorna -1.
-*
+*	Se nao houver vertice gera uma condicao de erro.
+*	Deposita 1 no endereco especificado caso 
+*	o vertice ja tenha sido visitado, do contrario 0.
 *
 *  $FV Valor retornado
-*     1 caso o vertice ja tenha sido visitado, do contrario 0.
+*     VER_CondRetOK
+*	VER_CondRetVerticeNaoExiste
+*     
 *
 ***********************************************************************/
 
-int VER_Visitado(Vertice vertice);
+VER_tpCondRet VER_Visitado(Vertice vertice, int* endereco);
 
 /***********************************************************************
 *
@@ -227,17 +228,19 @@ int VER_Visitado(Vertice vertice);
 *
 *	$EP Parametros
 *     $P vertice  - o vertice.
-*	
+*	$P endereco - o endereco do inteiro no qual colocar o valor.
+*
 *  $ED Descricao da funcao
-*	Retorna a chave do vertice.
-*	Se nao houver vertice retorna -1.
+*	Deposita a chave do vertice no endereco especificado.
+*	Se nao houver vertice gera uma condicao de erro.
 *
 *  $FV Valor retornado
-*     A chave do vertice
+*     VER_CondRetOK
+*	VER_CondRetVerticeNaoExiste
 *
 ***********************************************************************/
 
-int VER_getChave(Vertice vertice);
+VER_tpCondRet VER_getChave(Vertice vertice, int* endereco);
 
 /***********************************************************************
 *
@@ -245,19 +248,21 @@ int VER_getChave(Vertice vertice);
 *
 *	$EP Parametros
 *     $P vertice  - o vertice.
+*	$P endereco - o endereco do VER_TipoVer no qual colocar o valor.
 *	
 *  $ED Descricao da funcao
-*	Retorna o tipo do vertice.
-*	Se nao houver vertice retorna -1.
+*	Deposita o tipo do vertice no endereco especificado.
+*	Se nao houver vertice gera uma condicao de erro.
 *
 *  $FV Valor retornado
-*     O tipo do vertice
+*     VER_CondRetOK
+*	VER_CondRetVerticeNaoExiste
 *
 ***********************************************************************/
 
-VER_TipoVer VER_getTipo(Vertice vertice);
+VER_TipoVer VER_getTipo(Vertice vertice, VER_TipoVer* endereco);
 
-/************************Fim de funcoes adicionais de VERTICE que nao serao testadas*****************************/
+/************************Fim de funcoes adicionais de VERTICE*****************************/
 
 
 /************************Funcoes de acesso a estrutura Aresta*****************************/
@@ -270,7 +275,6 @@ VER_TipoVer VER_getTipo(Vertice vertice);
 *     $P endereco - endereco da aresta a ser inicializada.
 *	$P origem	- chave do vertice origem da aresta.
 *	$P destino	- chave do vertice destino da aresta
-*	$P peso	- peso da aresta (e.g. distancia entre os vertices)
 *	$P rotulo	- rotulo da aresta
 *	
 *  $ED Descricao da funcao
@@ -284,7 +288,7 @@ VER_TipoVer VER_getTipo(Vertice vertice);
 *
 ***********************************************************************/
 
-VER_tpCondRet VER_CriarAresta(Aresta* endereco, int origem, int destino, float peso, char* rotulo);
+VER_tpCondRet VER_CriarAresta(Aresta* endereco, int origem, int destino, char* rotulo);
 
 /***********************************************************************
 *
@@ -307,7 +311,7 @@ void VER_DestruirAresta(Aresta* endereco);
 *
 *	$EP Parametros
 *     $P aresta   - aresta cujos valores se quer receber.
-*	$P chaves	- endereco do array de inteiros onde serao colocaos as chaves da aresta
+*	$P chaves	- endereco do ponteiro para array de inteiros onde serao colocaos as chaves da aresta
 *	
 *  $ED Descricao da funcao
 *	Retorna os valores origem e destino das chaves dos vertices da aresta nas respectivas posicoes 0 e 1 do parametro chaves
@@ -322,46 +326,25 @@ void VER_DestruirAresta(Aresta* endereco);
 
 VER_tpCondRet VER_GetChaves(Aresta aresta, int** chaves);
 
-/************************Funcoes adicionais de ARESTA que nao serao testadas*****************************/
-//Essas funcoes sao implementadas basicamente com um return e assim dispensam testes
-
-/***********************************************************************
-*
-*  $FC Funcao: VER Get Peso
-*
-*	$EP Parametros
-*     $P aresta  - a aresta.
-*	
-*  $ED Descricao da funcao
-*	Retorna o peso da aresta.
-*	Se nao houver aresta retorna -1.
-*
-*  $FV Valor retornado
-*     O peso da aresta
-*
-***********************************************************************/
-
-float VER_getPeso(Aresta aresta);
-
 /***********************************************************************
 *
 *  $FC Funcao: VER Get Rotulo
 *
 *	$EP Parametros
-*     $P aresta  - a aresta.
-*	
+*     $P aresta   - a aresta.
+*	$P endereco - o endereco do ponteiro para array de caracteres no qual colocar o valor.
+*
 *  $ED Descricao da funcao
-*	Retorna o rotulo da aresta.
-*	Se nao houver aresta retorna -1.
+*	Deposita o rotulo da aresta no endereco especificado.
+*	Se nao houver aresta gera uma condicao de erro.
 *
 *  $FV Valor retornado
-*     O rotulo da aresta
+*     VER_CondRetOK
+*	VER_CondRetArestaNaoExiste
 *
 ***********************************************************************/
 
-char* VER_getRotulo(Aresta aresta);
-
-/************************Fim de funcoes adicionais de ARESTA que nao serao testadas*****************************/
+VER_tpCondRet VER_getRotulo(Aresta aresta, char** endereco);
 
 /************************Fim das funcoes de acesso a estrutura Aresta*****************************/
 

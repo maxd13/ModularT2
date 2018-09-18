@@ -1,11 +1,13 @@
 #include <stdlib.h>
+#include <string.h>
 #include "vertice.h"
+#include "LISTA.H"
 
 
 struct vertice{
 	// listas de ARESTAS
-	Lista sucessores;
-	Lista antecessores;
+	LIS_tppLista sucessores;
+	LIS_tppLista antecessores;
 	// a unica aresta do vertice para ele mesmo, se houver.
 	Aresta reflexiva;
 	void* valor;
@@ -19,6 +21,5 @@ struct vertice{
 struct aresta{
 	int origem;
 	int destino;
-	float peso;
 	char* rotulo;
 };
