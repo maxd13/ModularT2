@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include "grafo.h"
-#include "LISTA.H"
 
 struct grafo{
 	LIS_tppLista vertices;
@@ -29,7 +28,7 @@ void GRP_DestruirGrafo(Grafo* endereco){
 	Grafo g;
 	if(!endereco || !(*endereco)) return;
 	g = *endereco;
-	VER_DestruirVertice(&g->corrente);
+	VER_DestruirVertice(g->corrente);
 	LIS_DestruirLista(g->origens);
 	LIS_DestruirLista(g->vertices);
 	free(g);
@@ -43,7 +42,7 @@ GRP_tpCondRet GRP_InserirVertice(Grafo grafo, Vertice vertice){
 	if(!grafo) return GRP_CondRetGrafoNaoExiste;
 	if(!vertice) return GRP_CondRetOK;
 
-	//listas de ENDERECOS de vertices
+	//listas de vertices
 	if(!grafo->vertices) grafo->vertices = LIS_CriarLista((void(*)(void *pDado))VER_DestruirVertice);
 	if(!grafo->origens) grafo->origens = LIS_CriarLista((void(*)(void *pDado))VER_DestruirVertice);
 	//verificando a criacao correta de todos os dados
@@ -75,7 +74,7 @@ GRP_tpCondRet VerticedeChave(Grafo grafo, int chave, Vertice* endereco){
 
 	while(cond != LIS_CondRetFimLista){
 		//obter valor atual
-		corr = *((Vertice*) LIS_ObterValor(grafo->vertices));
+		corr = (Vertice) LIS_ObterValor(grafo->vertices);
 		//se nao houver a lista estara vazia. Neste caso, o grafo tambem.
 		if(!corr) return GRP_CondRetGrafoVazio;
 		//comparar as chaves para ver se achou

@@ -21,7 +21,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "vertice.h"
-#include "LISTA.H"
 
 /***********************************************************************
 *
@@ -87,7 +86,7 @@ struct aresta{
 
 VER_tpCondRet VER_CriarVertice(Vertice* endereco, void* valor, int chave, void(*ExcluirValor)(void * valor)){
 	if(!endereco) return VER_CondRetOK;
-	if(*endereco) VER_DestruirVertice(endereco);
+	if(*endereco) VER_DestruirVertice(*endereco);
 
 	*endereco = (Vertice) malloc(sizeof(struct vertice));
 	if(!(*endereco)) return VER_CondRetFaltouMemoria;
@@ -117,10 +116,6 @@ VER_tpCondRet VER_InserirAresta(Vertice vertice, Aresta aresta){
 	if(!orig && !dest) return VER_CondRetErroInsercao;
 
 	if(orig && dest) vertice->reflexiva = aresta;
-	// note que as listas aqui vao ter que armazenar os ENDERECOS para arestas (i.e. Aresta*)
-	// devido a forma com a qual a lista e' implementada. Para excluir um elemento a lista chama 
-	// a funcao passada como argumento na sua criacao imediatamente para um valor armazenado. Como
-	// a funcao que passamos espera um valor Aresta*, este deve ser o tipo dos elementos contidos na lista.
 	else if(!orig){
 		if(!vertice->antecessores) vertice->antecessores = LIS_CriarLista((void(*)(void *pDado))VER_DestruirAresta);
 		if(!vertice->antecessores) return VER_CondRetFaltouMemoria;
@@ -152,16 +147,13 @@ VER_tpCondRet VER_ModificarTipo(Vertice vertice, VER_TipoVer tipo){
 *  Funcao: VER Destruir Vertice
 *  ****/
 
-void VER_DestruirVertice(Vertice* endereco){
-	Vertice v;
-	if(!endereco || !(*endereco)) return;
-	v = *endereco;
-	VER_DestruirAresta(&v->reflexiva);
-	LIS_DestruirLista(v->antecessores);
-	LIS_DestruirLista(v->sucessores);
-	v->ExcluirValor(v->valor);
-	free(v);
-	*endereco = NULL;
+void VER_DestruirVertice(Vertice vertice){
+	if(!vertice) return;
+	VER_DestruirAresta(vertice->reflexiva);
+	LIS_DestruirLista(vertice->antecessores);
+	LIS_DestruirLista(vertice->sucessores);
+	vertice->ExcluirValor(vertice->valor);
+	free(vertice);
 }
 
 /***************************************************************************
@@ -184,6 +176,42 @@ VER_tpCondRet VER_getValor(Vertice vertice, void** enderecoValor){
 	if(!vertice) return VER_CondRetVerticeNaoExiste;
 	if(!enderecoValor) return VER_CondRetOK;
 	*enderecoValor = vertice->valor;
+	return VER_CondRetOK;
+}
+
+/***************************************************************************
+*
+*  Funcao: VER Get Sucessores
+*  ****/
+
+VER_tpCondRet VER_getSucessores(Vertice vertice, LIS_tppLista* enderecoSucessores){
+	if(!vertice) return VER_CondRetVerticeNaoExiste;
+	if(!enderecoSucessores) return VER_CondRetOK;
+	*enderecoSucessores = vertice->sucessores;
+	return VER_CondRetOK;
+}
+
+/***************************************************************************
+*
+*  Funcao: VER Get Antecessores
+*  ****/
+
+VER_tpCondRet VER_getAntecessores(Vertice vertice, LIS_tppLista* enderecoAntecessores){
+	if(!vertice) return VER_CondRetVerticeNaoExiste;
+	if(!enderecoAntecessores) return VER_CondRetOK;
+	*enderecoAntecessores = vertice->antecessores;
+	return VER_CondRetOK;
+}
+
+/***************************************************************************
+*
+*  Funcao: VER Get Reflexiva
+*  ****/
+
+VER_tpCondRet VER_getReflexiva(Vertice vertice, Aresta* enderecoReflexiva){
+	if(!vertice) return VER_CondRetVerticeNaoExiste;
+	if(!enderecoReflexiva) return VER_CondRetOK;
+	*enderecoReflexiva = vertice->reflexiva;
 	return VER_CondRetOK;
 }
 
@@ -234,7 +262,7 @@ VER_tpCondRet VER_getTipo(Vertice vertice, VER_TipoVer* endereco){
 
 VER_tpCondRet VER_CriarAresta(Aresta* endereco, int origem, int destino, char* rotulo){
 	if(!endereco) return VER_CondRetOK;
-	if(*endereco) VER_DestruirAresta(endereco);
+	if(*endereco) VER_DestruirAresta(*endereco);
 
 	*endereco = (Aresta) malloc(sizeof(struct aresta));
 	if(!(*endereco)) return VER_CondRetFaltouMemoria;
@@ -251,10 +279,9 @@ VER_tpCondRet VER_CriarAresta(Aresta* endereco, int origem, int destino, char* r
 *  Funcao: VER Destruir Aresta
 *  ****/
 
-void VER_DestruirAresta(Aresta* endereco){
-	if(!endereco || !(*endereco)) return;
-	free(*endereco);
-	*endereco = NULL;
+void VER_DestruirAresta(Aresta aresta){
+	if(!aresta) return;
+	free(aresta);
 }
 
 /***************************************************************************

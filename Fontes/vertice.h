@@ -48,6 +48,8 @@
 *
 ***************************************************************************/
 
+#include "LISTA.H"
+
 typedef struct vertice* Vertice;
 typedef struct aresta* Aresta;
 
@@ -167,15 +169,17 @@ VER_tpCondRet VER_ModificarTipo(Vertice vertice, VER_TipoVer tipo);
 *  $FC funcao: VER Destruir vertice
 *
 *	$EP Parametros
-*     $P endereco - endereco do vertice a ser destruido.
+*     $P vertice - vertice a ser destruido.
 *
 *  $ED Descricao da funcao
-*     Destroi o vertice, anulando o vertice presente no local especificado.
+*     Destroi o vertice.
 *     Faz nada caso o vertice nao exista.
+*	Depois de destruido o vertice nao e' anulado,
+*	isto deve ser feito pelo caller da funcao.
 *
 ***********************************************************************/
 
-void VER_DestruirVertice(Vertice* endereco);
+void VER_DestruirVertice(Vertice vertice);
 
 /***********************************************************************
 *
@@ -217,6 +221,73 @@ VER_tpCondRet VER_MarcarVisitado(Vertice vertice);
 ***********************************************************************/
 
 VER_tpCondRet VER_getValor(Vertice vertice, void** enderecoValor);
+
+/***********************************************************************
+*
+*  $FC Funcao: VER Get Sucessores
+*
+*	$EP Parametros
+*     $P vertice		    - vertice.
+*	$P enderecoSucessores - endereco da lista onde serao postos os sucessores do vertice.
+*	
+*  $ED Descricao da funcao
+*	Coloca a lista de arestas de sucessores do vertice no endereco especificado. 
+*	Se o endereco e' nulo, nao faz nada e retorna OK.
+*	Se nao existirem sucessores, o valor NULL sera colocado no endereco.
+*
+*
+*  $FV Valor retornado
+*     VER_CondRetOK
+*	VER_CondRetVerticeNaoExiste
+*
+***********************************************************************/
+
+VER_tpCondRet VER_getSucessores(Vertice vertice, LIS_tppLista* enderecoSucessores);
+
+/***********************************************************************
+*
+*  $FC Funcao: VER Get Antecessores
+*
+*	$EP Parametros
+*     $P vertice		    - vertice.
+*	$P enderecoAntecessores - endereco da lista onde serao postos os sucessores do vertice.
+*	
+*  $ED Descricao da funcao
+*	Coloca a lista de arestas de antecessores do vertice no endereco especificado. 
+*	Se o endereco e' nulo, nao faz nada e retorna OK.
+*	Se nao existirem antecessores, o valor NULL sera colocado no endereco.
+*
+*
+*  $FV Valor retornado
+*     VER_CondRetOK
+*	VER_CondRetVerticeNaoExiste
+*
+***********************************************************************/
+
+VER_tpCondRet VER_getAntecessores(Vertice vertice, LIS_tppLista* enderecoAntecessores);
+
+/***********************************************************************
+*
+*  $FC Funcao: VER Get Reflexiva
+*
+*	$EP Parametros
+*     $P vertice		    - vertice.
+*	$P enderecoReflexiva  - endereco aonde a Aresta deve ser colocada.
+*	
+*  $ED Descricao da funcao
+*	Coloca a unica aresta do vertice para ele mesmo no endereco especificado. 
+*	Se o endereco e' nulo, nao faz nada e retorna OK.
+*	Se nao existir aresta, o valor NULL sera colocado no endereco.
+*
+*
+*  $FV Valor retornado
+*     VER_CondRetOK
+*	VER_CondRetVerticeNaoExiste
+*
+***********************************************************************/
+
+VER_tpCondRet VER_getReflexiva(Vertice vertice, Aresta* enderecoReflexiva);
+
 
 /************************Funcoes adicionais de VERTICE*****************************/
 
@@ -322,15 +393,17 @@ VER_tpCondRet VER_CriarAresta(Aresta* endereco, int origem, int destino, char* r
 *  $FC funcao: VER Destruir aresta
 *
 *	$EP Parametros
-*     $P endereco - endereco da aresta a ser destruida.
+*     $P aresta - aresta a ser destruida.
 *
 *  $ED Descricao da funcao
-*     Destroi a aresta, anulando a aresta presente no local especificado.
+*     Destroi a aresta.
 *     Faz nada caso a aresta nao exista.
+*	Depois de destruido a aresta nao e' anulada,
+*	isto deve ser feito pelo caller da funcao.
 *
 ***********************************************************************/
 
-void VER_DestruirAresta(Aresta* endereco);
+void VER_DestruirAresta(Aresta aresta);
 
 /***********************************************************************
 *
