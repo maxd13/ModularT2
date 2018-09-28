@@ -119,11 +119,15 @@ VER_tpCondRet VER_InserirAresta(Vertice vertice, Aresta aresta){
 	else if(!orig){
 		if(!vertice->antecessores) vertice->antecessores = LIS_CriarLista((void(*)(void *pDado))VER_DestruirAresta);
 		if(!vertice->antecessores) return VER_CondRetFaltouMemoria;
+		//verifica se aresta ja existe no vertice, nesse caso nada precisa ser feito.
+		if(LIS_ProcurarValor(vertice->antecessores, aresta) == LIS_CondRetOK) return VER_CondRetOK;
 		LIS_InserirElementoApos(vertice->antecessores, &aresta);
 	}
 	else{
 		if(!vertice->sucessores) vertice->sucessores = LIS_CriarLista((void(*)(void *pDado))VER_DestruirAresta);
 		if(!vertice->sucessores) return VER_CondRetFaltouMemoria;
+		//verifica se aresta ja existe no vertice, nesse caso nada precisa ser feito.
+		if(LIS_ProcurarValor(vertice->sucessores, aresta) == LIS_CondRetOK) return VER_CondRetOK;
 		LIS_InserirElementoApos(vertice->sucessores, &aresta);
 	}
 
@@ -289,15 +293,11 @@ void VER_DestruirAresta(Aresta aresta){
 *  Funcao: VER Get Chaves
 *  ****/
 
-VER_tpCondRet VER_GetChaves(Aresta aresta, int** chaves){
+VER_tpCondRet VER_GetChaves(Aresta aresta, int (*chaves)[2]){
 	if(!aresta) return VER_CondRetArestaNaoExiste;
 	if(!chaves) return VER_CondRetOK;
-
-	*chaves = (int*) malloc(2*sizeof(int));
-	if(!(*chaves)) return VER_CondRetFaltouMemoria;
-	*chaves[0] = aresta->origem;
-	*chaves[1] = aresta->destino;
-
+	(*chaves)[0] = aresta->origem;
+	(*chaves)[1] = aresta->destino;
 	return VER_CondRetOK;
 }
 

@@ -135,6 +135,11 @@ VER_tpCondRet VER_CriarVertice(Vertice* endereco, void* valor, int chave, void(*
 *     $P vertice    - vertice no qual inserir as arestas.
 *	$P aresta	  - aresta para outros vertices a ser inserida.
 *
+*  $ED Descricao da funcao
+*	Insere uma nova aresta.
+*	Verifica antes se a aresta a ser inserida ja existe no vertice, 
+*	nesse caso nada e' feito e OK e' retornado.
+*
 *  $FV Valor retornado
 *     VER_CondRetOK
 *	VER_CondRetVerticeNaoExiste
@@ -411,7 +416,7 @@ void VER_DestruirAresta(Aresta aresta);
 *
 *	$EP Parametros
 *     $P aresta   - aresta cujos valores se quer receber.
-*	$P chaves	- endereco do ponteiro para array de inteiros onde serao colocaos as chaves da aresta
+*	$P chaves	- endereco do array estatico de inteiros onde serao colocaos as chaves da aresta
 *	
 *  $ED Descricao da funcao
 *	Retorna os valores origem e destino das chaves dos vertices da aresta nas respectivas posicoes 0 e 1 do parametro chaves.
@@ -421,11 +426,10 @@ void VER_DestruirAresta(Aresta aresta);
 *  $FV Valor retornado
 *     VER_CondRetOK
 *	VER_CondRetArestaNaoExiste
-*     VER_CondRetFaltouMemoria
 *
 ***********************************************************************/
 
-VER_tpCondRet VER_GetChaves(Aresta aresta, int** chaves);
+VER_tpCondRet VER_GetChaves(Aresta aresta, int (*chaves)[2]);
 
 /***********************************************************************
 *

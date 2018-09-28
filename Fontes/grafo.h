@@ -101,13 +101,14 @@ void GRP_DestruirGrafo(Grafo* endereco);
 *  $FC Funcao: GRP Inserir vertice
 *
 *  $EP Parametros
-*	$P grafo - grafo no qual inserir o vertice.
-*     $P vertice - vertice a ser inserido.
+*	$P grafo     - grafo no qual inserir o vertice.
+*     $P vertice   - vertice a ser inserido.
 *
 *  $ED Descricao da funcao
 *	Insere um vertice no grafo.
 *	Caso a chave do vertice ja exista no grafo, nada e' feito e um erro de estrutura e' retornado.
-*	Caso o vertice tenha arestas, todos os nos vizinhos serao inseridos tambem.
+*	Caso o vertice tenha arestas, e' verificado se todos os seus vizinhos fazem parte do grafo,
+*	nesse caso as arestas sao adicionadas, do contrario um erro de estrutura e' retornado.
 *	Caso o vertice nao exista nada e' feito e OK e' retornado.
 *	
 *
@@ -115,7 +116,7 @@ void GRP_DestruirGrafo(Grafo* endereco);
 *     GRP_CondRetOK
 *	GRP_CondRetGrafoNaoExiste
 *     GRP_CondRetFaltouMemoria
-*	GRP_CondRetErroEstrutura - caso a chave do vertice ja' exista no grafo
+*	GRP_CondRetErroEstrutura - caso a chave do vertice ja' exista no grafo ou a chave de algum de seus vizinhos nao exista
 *
 ***********************************************************************/
 
@@ -131,13 +132,13 @@ GRP_tpCondRet GRP_InserirVertice(Grafo grafo, Vertice vertice);
 *
 *  $ED Descricao da funcao
 *	Insere uma aresta no grafo.
-*	Caso a aresta ja exista no grafo enquanto par ordenado de chaves, faz um update dos seus outros valores.
+*	Caso a aresta ja exista no grafo enquanto par ordenado de chaves, nada e' feito e um erro de estrutura 'e retornado.
 
 *  $FV Valor retornado
 *     GRP_CondRetOK
 *	GRP_CondRetGrafoNaoExiste
 *	GRP_CondRetGrafoVazio
-*	GRP_CondRetErroEstrutura - caso os vertices da aresta nao existam no grafo
+*	GRP_CondRetErroEstrutura - caso os vertices da aresta nao existam no grafo ou a aresta ja exista.
 *     GRP_CondRetFaltouMemoria
 *
 ***********************************************************************/
