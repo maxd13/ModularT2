@@ -132,7 +132,7 @@ VER_tpCondRet VER_CriarVertice(Vertice* endereco, void* valor, int chave, void(*
 *  $FC Funcao: VER Inserir Aresta
 *
 *	$EP Parametros
-*     $P vertice    - vertice no qual inserir as arestas.
+*     $P vertice    - vertice no qual inserir a aresta.
 *	$P aresta	  - aresta para outros vertices a ser inserida.
 *
 *  $ED Descricao da funcao
@@ -150,6 +150,29 @@ VER_tpCondRet VER_CriarVertice(Vertice* endereco, void* valor, int chave, void(*
 ***********************************************************************/
 
 VER_tpCondRet VER_InserirAresta(Vertice vertice, Aresta aresta);
+
+/***********************************************************************
+*
+*  $FC Funcao: VER Remover Aresta
+*
+*	$EP Parametros
+*     $P vertice    - vertice do qual remover a aresta.
+*	$P aresta	  - aresta para outros vertices a ser removida.
+*
+*  $ED Descricao da funcao
+*	Remove uma aresta.
+*	Caso a aresta nao exista, nada e' feito e OK e' retornado.
+*
+*  $FV Valor retornado
+*     VER_CondRetOK
+*	VER_CondRetVerticeNaoExiste
+*	VER_CondRetArestaNaoExiste - caso a aresta seja nula.
+*	VER_CondRetErroInsercao	   - caso nem origem nem destino da aresta sejam iguais a chave do vertice.
+*     VER_CondRetFaltouMemoria
+*
+***********************************************************************/
+
+VER_tpCondRet VER_RemoverAresta(Vertice vertice, Aresta aresta);
 
 /***********************************************************************
 *

@@ -132,13 +132,13 @@ GRP_tpCondRet GRP_InserirVertice(Grafo grafo, Vertice vertice);
 *
 *  $ED Descricao da funcao
 *	Insere uma aresta no grafo.
-*	Caso a aresta ja exista no grafo enquanto par ordenado de chaves, nada e' feito e um erro de estrutura 'e retornado.
+*	Caso a aresta ja exista no grafo enquanto par ordenado de chaves, nada e' feito e OK e' retornado.
 
 *  $FV Valor retornado
 *     GRP_CondRetOK
 *	GRP_CondRetGrafoNaoExiste
 *	GRP_CondRetGrafoVazio
-*	GRP_CondRetErroEstrutura - caso os vertices da aresta nao existam no grafo ou a aresta ja exista.
+*	GRP_CondRetErroEstrutura - caso os vertices da aresta nao existam no grafo.
 *     GRP_CondRetFaltouMemoria
 *
 ***********************************************************************/
@@ -158,7 +158,6 @@ GRP_tpCondRet GRP_InserirAresta(Grafo grafo, Aresta aresta);
 *	GRP_CondRetGrafoNaoExiste
 *	GRP_CondRetGrafoVazio
 *	GRP_CondRetErroEstrutura - caso a chave nao referencie um vertice
-*     GRP_CondRetFaltouMemoria
 *
 ***********************************************************************/
 
@@ -170,18 +169,18 @@ GRP_tpCondRet GRP_RemoverVertice(Grafo grafo, int vertice);
 *
 *  $EP Parametros
 *	$P grafo - grafo do qual remover a aresta.
-*     $P aresta - array de duas posicoes com as chaves dos vertices da aresta a ser removida.
+*     $P aresta - aresta a ser removida.
 *
 *  $FV Valor retornado
 *     GRP_CondRetOK
 *	GRP_CondRetGrafoNaoExiste
 *	GRP_CondRetGrafoVazio
-*	GRP_CondRetErroEstrutura - caso a aresta nao exista no grafo
+*	GRP_CondRetErroEstrutura - caso os vertices da aresta nao existam no grafo
 *     GRP_CondRetFaltouMemoria
 *
 ***********************************************************************/
 
-GRP_tpCondRet GRP_RemoverAresta(Grafo grafo, int (*aresta)[2]);
+GRP_tpCondRet GRP_RemoverAresta(Grafo grafo, Aresta aresta);
 
 /***********************************************************************
 *

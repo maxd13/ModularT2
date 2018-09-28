@@ -136,6 +136,42 @@ VER_tpCondRet VER_InserirAresta(Vertice vertice, Aresta aresta){
 
 /***************************************************************************
 *
+*  Funcao: VER Remover Aresta
+*  ****/
+
+VER_tpCondRet VER_RemoverAresta(Vertice vertice, Aresta aresta){
+	char orig = aresta->origem == vertice->chave;
+	char dest = aresta->destino == vertice->chave;
+	
+	if(!vertice) return VER_CondRetVerticeNaoExiste;
+	if(!aresta) return VER_CondRetArestaNaoExiste;
+	if(!orig && !dest) return VER_CondRetErroInsercao;
+
+	if(orig && dest) {
+		VER_DestruirAresta(vertice->reflexiva);
+		vertice->reflexiva = NULL;
+	}
+	else if(!orig){
+		if(!vertice->antecessores) vertice->antecessores = LIS_CriarLista((void(*)(void *pDado))VER_DestruirAresta);
+		if(!vertice->antecessores) return VER_CondRetFaltouMemoria;
+		//verifica se aresta ja existe no vertice, do contrario nada precisa ser feito.
+		if(LIS_ProcurarValor(vertice->antecessores, aresta) != LIS_CondRetOK) return VER_CondRetOK;
+		LIS_ExcluirElemento(vertice->antecessores);
+	}
+	else{
+		if(!vertice->sucessores) vertice->sucessores = LIS_CriarLista((void(*)(void *pDado))VER_DestruirAresta);
+		if(!vertice->sucessores) return VER_CondRetFaltouMemoria;
+		//verifica se aresta ja existe no vertice, do contrario nada precisa ser feito.
+		if(LIS_ProcurarValor(vertice->sucessores, aresta) != LIS_CondRetOK) return VER_CondRetOK;
+		LIS_ExcluirElemento(vertice->sucessores);
+	}
+
+	return VER_CondRetOK;
+}
+
+
+/***************************************************************************
+*
 *  Funcao: VER Modificar Tipo
 *  ****/
 
