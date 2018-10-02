@@ -75,8 +75,8 @@ void GRP_DestruirGrafo(Grafo* endereco){
 	if(!endereco || !(*endereco)) return;
 	g = *endereco;
 	VER_DestruirVertice(g->corrente);
-	LIS_DestruirLista(g->origens);
-	LIS_DestruirLista(g->vertices);
+	if(g->origens)  LIS_DestruirLista(g->origens);
+	if(g->vertices) LIS_DestruirLista(g->vertices);
 	free(g);
 	*endereco = NULL;
 }
@@ -117,7 +117,7 @@ GRP_tpCondRet GRP_InserirVertice(Grafo grafo, Vertice vertice){
 	
 	VER_getSucessores(vertice, &sucessores);
 	VER_getAntecessores(vertice, &antecessores);
-	if(!LIS_ObterValor(sucessores) && !LIS_ObterValor(antecessores)){
+	if((!sucessores || !LIS_ObterValor(sucessores)) && (!antecessores || !LIS_ObterValor(antecessores))){
 		LIS_InserirElementoApos(grafo->vertices, vertice);
 		LIS_InserirElementoApos(grafo->origens, vertice);
 		return GRP_CondRetOK;
@@ -126,7 +126,7 @@ GRP_tpCondRet GRP_InserirVertice(Grafo grafo, Vertice vertice){
 	//se ele nao for uma origem temos que verificar se seus vizinhos existem.
 	IrInicioLista(sucessores);
 	//se retornar null e' porque a lista esta vazia ou nula.
-	atual = (Aresta) LIS_ObterValor(sucessores);
+	atual = (Aresta) (sucessores ? LIS_ObterValor(sucessores) : NULL);
 	while(atual && lcond != LIS_CondRetFimLista){
 		VER_GetChaves(atual, &chaves);
 		cond = VerticedeChave(grafo, chaves[1], &v);
@@ -146,7 +146,7 @@ GRP_tpCondRet GRP_InserirVertice(Grafo grafo, Vertice vertice){
 	lcond = LIS_CondRetOK;
 	//faz o mesmo para os antecessores
 	IrInicioLista(antecessores);
-	atual = (Aresta) LIS_ObterValor(antecessores);
+	atual = (Aresta) (antecessores ? LIS_ObterValor(antecessores) : NULL);
 	while(atual && lcond != LIS_CondRetFimLista){
 		VER_GetChaves(atual, &chaves);
 		cond = VerticedeChave(grafo, chaves[0], &v);
@@ -216,7 +216,7 @@ GRP_tpCondRet GRP_RemoverVertice(Grafo grafo, int vertice){
 	IrInicioLista(lista);
 	while(cond != LIS_CondRetFimLista){
 		//obter valor atual
-		corr = (Aresta) LIS_ObterValor(lista);
+		corr = (Aresta) (lista ? LIS_ObterValor(lista) : NULL);
 		//se nao houver a lista estara vazia. Neste caso, paramos por aqui.
 		if(!corr) break;
 		//Neste caso devemos obter o vertice destino e remover dele a aresta atual
@@ -236,7 +236,7 @@ GRP_tpCondRet GRP_RemoverVertice(Grafo grafo, int vertice){
 	IrInicioLista(lista);
 	while(cond != LIS_CondRetFimLista){
 		//obter valor atual
-		corr = (Aresta) LIS_ObterValor(lista);
+		corr = (Aresta) (lista ? LIS_ObterValor(lista) : NULL);
 		//se nao houver a lista estara vazia. Neste caso, paramos por aqui.
 		if(!corr) break;
 		//Neste caso devemos obter o vertice origem e remover dele a aresta atual
@@ -250,7 +250,7 @@ GRP_tpCondRet GRP_RemoverVertice(Grafo grafo, int vertice){
 	}
 
 	//finalmente removemos o vertice atual de ambas as listas de vertices. Isto automaticamente destroi o vertice.
-	if(LIS_ProcurarValor(grafo->origens, v) == LIS_CondRetOK) LIS_ExcluirElemento(grafo->origens);
+	if(grafo->origens && LIS_ProcurarValor(grafo->origens, v) == LIS_CondRetOK) LIS_ExcluirElemento(grafo->origens);
 	if(LIS_ProcurarValor(grafo->vertices, v) == LIS_CondRetOK) LIS_ExcluirElemento(grafo->vertices);
 
 	return GRP_CondRetOK;

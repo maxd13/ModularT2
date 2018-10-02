@@ -108,11 +108,13 @@ VER_tpCondRet VER_CriarVertice(Vertice* endereco, void* valor, int chave, void(*
 *  ****/
 
 VER_tpCondRet VER_InserirAresta(Vertice vertice, Aresta aresta){
-	char orig = aresta->origem == vertice->chave;
-	char dest = aresta->destino == vertice->chave;
+	char orig;
+	char dest;
 	
 	if(!vertice) return VER_CondRetVerticeNaoExiste;
 	if(!aresta) return VER_CondRetArestaNaoExiste;
+	orig = aresta->origem == vertice->chave;
+	dest = aresta->destino == vertice->chave;
 	if(!orig && !dest) return VER_CondRetErroInsercao;
 
 	if(orig && dest) vertice->reflexiva = aresta;
@@ -140,11 +142,13 @@ VER_tpCondRet VER_InserirAresta(Vertice vertice, Aresta aresta){
 *  ****/
 
 VER_tpCondRet VER_RemoverAresta(Vertice vertice, Aresta aresta){
-	char orig = aresta->origem == vertice->chave;
-	char dest = aresta->destino == vertice->chave;
+	char orig;
+	char dest;
 	
 	if(!vertice) return VER_CondRetVerticeNaoExiste;
 	if(!aresta) return VER_CondRetArestaNaoExiste;
+	orig = aresta->origem == vertice->chave;
+	dest = aresta->destino == vertice->chave;
 	if(!orig && !dest) return VER_CondRetErroInsercao;
 
 	if(orig && dest) {
@@ -190,8 +194,8 @@ VER_tpCondRet VER_ModificarTipo(Vertice vertice, VER_TipoVer tipo){
 void VER_DestruirVertice(Vertice vertice){
 	if(!vertice) return;
 	VER_DestruirAresta(vertice->reflexiva);
-	LIS_DestruirLista(vertice->antecessores);
-	LIS_DestruirLista(vertice->sucessores);
+	if(vertice->antecessores) LIS_DestruirLista(vertice->antecessores);
+	if(vertice->sucessores) LIS_DestruirLista(vertice->sucessores);
 	vertice->ExcluirValor(vertice->valor);
 	free(vertice);
 }
