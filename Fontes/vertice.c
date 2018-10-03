@@ -123,14 +123,14 @@ VER_tpCondRet VER_InserirAresta(Vertice vertice, Aresta aresta){
 		if(!vertice->antecessores) return VER_CondRetFaltouMemoria;
 		//verifica se aresta ja existe no vertice, nesse caso nada precisa ser feito.
 		if(LIS_ProcurarValor(vertice->antecessores, aresta) == LIS_CondRetOK) return VER_CondRetOK;
-		LIS_InserirElementoApos(vertice->antecessores, &aresta);
+		LIS_InserirElementoApos(vertice->antecessores, aresta);
 	}
 	else{
 		if(!vertice->sucessores) vertice->sucessores = LIS_CriarLista((void(*)(void *pDado))VER_DestruirAresta);
 		if(!vertice->sucessores) return VER_CondRetFaltouMemoria;
 		//verifica se aresta ja existe no vertice, nesse caso nada precisa ser feito.
 		if(LIS_ProcurarValor(vertice->sucessores, aresta) == LIS_CondRetOK) return VER_CondRetOK;
-		LIS_InserirElementoApos(vertice->sucessores, &aresta);
+		LIS_InserirElementoApos(vertice->sucessores, aresta);
 	}
 
 	return VER_CondRetOK;
@@ -156,15 +156,13 @@ VER_tpCondRet VER_RemoverAresta(Vertice vertice, Aresta aresta){
 		vertice->reflexiva = NULL;
 	}
 	else if(!orig){
-		if(!vertice->antecessores) vertice->antecessores = LIS_CriarLista((void(*)(void *pDado))VER_DestruirAresta);
-		if(!vertice->antecessores) return VER_CondRetFaltouMemoria;
+		if(!vertice->antecessores) return VER_CondRetOK;
 		//verifica se aresta ja existe no vertice, do contrario nada precisa ser feito.
 		if(LIS_ProcurarValor(vertice->antecessores, aresta) != LIS_CondRetOK) return VER_CondRetOK;
 		LIS_ExcluirElemento(vertice->antecessores);
 	}
 	else{
-		if(!vertice->sucessores) vertice->sucessores = LIS_CriarLista((void(*)(void *pDado))VER_DestruirAresta);
-		if(!vertice->sucessores) return VER_CondRetFaltouMemoria;
+		if(!vertice->sucessores) return VER_CondRetOK;
 		//verifica se aresta ja existe no vertice, do contrario nada precisa ser feito.
 		if(LIS_ProcurarValor(vertice->sucessores, aresta) != LIS_CondRetOK) return VER_CondRetOK;
 		LIS_ExcluirElemento(vertice->sucessores);

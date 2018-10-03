@@ -161,14 +161,13 @@ VER_tpCondRet VER_InserirAresta(Vertice vertice, Aresta aresta);
 *
 *  $ED Descricao da funcao
 *	Remove uma aresta.
-*	Caso a aresta nao exista, nada e' feito e OK e' retornado.
+*	Caso a aresta nao exista no vertice, nada e' feito e OK e' retornado.
 *
 *  $FV Valor retornado
 *     VER_CondRetOK
 *	VER_CondRetVerticeNaoExiste
 *	VER_CondRetArestaNaoExiste - caso a aresta seja nula.
 *	VER_CondRetErroInsercao	   - caso nem origem nem destino da aresta sejam iguais a chave do vertice.
-*     VER_CondRetFaltouMemoria
 *
 ***********************************************************************/
 

@@ -162,7 +162,7 @@ int pos = 0;
 
 		if ( strcmp( ComandoTeste , RESET_CMD ) == 0 ){
 			for( i = 0 ; i < DIM_VT ; i++ )
-            {
+            {		
 				if(vtAresta[i]) VER_DestruirAresta(vtAresta[i]);
 				if(vtVertice[i]) VER_DestruirVertice(vtVertice[i]);
 				if(StrBuffer[i]) free(StrBuffer[i]);

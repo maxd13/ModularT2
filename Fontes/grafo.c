@@ -74,7 +74,6 @@ void GRP_DestruirGrafo(Grafo* endereco){
 	Grafo g;
 	if(!endereco || !(*endereco)) return;
 	g = *endereco;
-	VER_DestruirVertice(g->corrente);
 	if(g->origens)  LIS_DestruirLista(g->origens);
 	if(g->vertices) LIS_DestruirLista(g->vertices);
 	free(g);
@@ -111,6 +110,8 @@ GRP_tpCondRet GRP_InserirVertice(Grafo grafo, Vertice vertice){
 	cond = VerticedeChave(grafo, chave, &v);
 	if(cond == GRP_CondRetOK) return GRP_CondRetErroEstrutura;
 
+	
+
 	//verifica vizinhos do vertice.
 	//verifica tambem se o vertice e' uma origem nova.
 	//para fazer isto basta verificar que ele nao tem vizinhos, pois se os tiver nao sera uma nova origem.
@@ -123,42 +124,47 @@ GRP_tpCondRet GRP_InserirVertice(Grafo grafo, Vertice vertice){
 		return GRP_CondRetOK;
 	}
 
-	//se ele nao for uma origem temos que verificar se seus vizinhos existem.
-	IrInicioLista(sucessores);
-	//se retornar null e' porque a lista esta vazia ou nula.
-	atual = (Aresta) (sucessores ? LIS_ObterValor(sucessores) : NULL);
-	while(atual && lcond != LIS_CondRetFimLista){
-		VER_GetChaves(atual, &chaves);
-		cond = VerticedeChave(grafo, chaves[1], &v);
-		//se o vizinho atual nao for encontrado, devemos retornar um erro de estrutura.
-		if(cond == GRP_CondRetErroEstrutura) return GRP_CondRetErroEstrutura;
-		//se o encontrar-mos, devemos tambem inserir a aresta atual no grafo inserindo-a no vizinho atual. 
-		//como indicado na documentacao da funcao de insercao, ela nao permite redundancias.
-		vcond = VER_InserirAresta(v, atual);
-		//devemos tratar a condicao de falta de memoria
-		if(vcond == VER_CondRetFaltouMemoria) return GRP_CondRetFaltouMemoria;
-		//passar para o proximo vizinho.
-		lcond = LIS_AvancarElementoCorrente(sucessores, 1);
-		atual = (Aresta) LIS_ObterValor(sucessores);
+
+	if(sucessores){
+		//se ele nao for uma origem temos que verificar se seus vizinhos existem.
+		IrInicioLista(sucessores);
+		//se retornar null e' porque a lista esta vazia
+		atual = (Aresta) (sucessores ? LIS_ObterValor(sucessores) : NULL);
+		while(atual && lcond != LIS_CondRetFimLista){
+			VER_GetChaves(atual, &chaves);
+			cond = VerticedeChave(grafo, chaves[1], &v);
+			//se o vizinho atual nao for encontrado, devemos retornar um erro de estrutura.
+			if(cond == GRP_CondRetErroEstrutura) return GRP_CondRetErroEstrutura;
+			//se o encontrar-mos, devemos tambem inserir a aresta atual no grafo inserindo-a no vizinho atual. 
+			//como indicado na documentacao da funcao de insercao, ela nao permite redundancias.
+			vcond = VER_InserirAresta(v, atual);
+			//devemos tratar a condicao de falta de memoria
+			if(vcond == VER_CondRetFaltouMemoria) return GRP_CondRetFaltouMemoria;
+			//passar para o proximo vizinho.
+			lcond = LIS_AvancarElementoCorrente(sucessores, 1);
+			atual = (Aresta) LIS_ObterValor(sucessores);
+		}
 	}
 
 	//reinicializa lcond
 	lcond = LIS_CondRetOK;
-	//faz o mesmo para os antecessores
-	IrInicioLista(antecessores);
-	atual = (Aresta) (antecessores ? LIS_ObterValor(antecessores) : NULL);
-	while(atual && lcond != LIS_CondRetFimLista){
-		VER_GetChaves(atual, &chaves);
-		cond = VerticedeChave(grafo, chaves[0], &v);
-		//se o vizinho atual nao for encontrado, devemos retornar um erro de estrutura.
-		if(cond == GRP_CondRetErroEstrutura) return GRP_CondRetErroEstrutura;
-		//se o encontrar-mos, devemos tambem inserir a aresta atual no grafo inserindo-a no vizinho atual. 
-		vcond = VER_InserirAresta(v, atual);
-		//devemos tratar a condicao de falta de memoria
-		if(vcond == VER_CondRetFaltouMemoria) return GRP_CondRetFaltouMemoria;
-		//passar para o proximo vizinho.
-		lcond = LIS_AvancarElementoCorrente(antecessores, 1);
-		atual = (Aresta) LIS_ObterValor(antecessores);
+	if(antecessores){
+		//faz o mesmo para os antecessores
+		IrInicioLista(antecessores);
+		atual = (Aresta) (antecessores ? LIS_ObterValor(antecessores) : NULL);
+		while(atual && lcond != LIS_CondRetFimLista){
+			VER_GetChaves(atual, &chaves);
+			cond = VerticedeChave(grafo, chaves[0], &v);
+			//se o vizinho atual nao for encontrado, devemos retornar um erro de estrutura.
+			if(cond == GRP_CondRetErroEstrutura) return GRP_CondRetErroEstrutura;
+			//se o encontrar-mos, devemos tambem inserir a aresta atual no grafo inserindo-a no vizinho atual. 
+			vcond = VER_InserirAresta(v, atual);
+			//devemos tratar a condicao de falta de memoria
+			if(vcond == VER_CondRetFaltouMemoria) return GRP_CondRetFaltouMemoria;
+			//passar para o proximo vizinho.
+			lcond = LIS_AvancarElementoCorrente(antecessores, 1);
+			atual = (Aresta) LIS_ObterValor(antecessores);
+		}
 	}
 
 	//finalmente a insercao.
@@ -213,40 +219,44 @@ GRP_tpCondRet GRP_RemoverVertice(Grafo grafo, int vertice){
 
 	// e' necessario remover pointeiros para arestas comuns das listas dos vizinhos do vertice a ser removido.
 	VER_getSucessores(v, &lista);
-	IrInicioLista(lista);
-	while(cond != LIS_CondRetFimLista){
-		//obter valor atual
-		corr = (Aresta) (lista ? LIS_ObterValor(lista) : NULL);
-		//se nao houver a lista estara vazia. Neste caso, paramos por aqui.
-		if(!corr) break;
-		//Neste caso devemos obter o vertice destino e remover dele a aresta atual
-		VER_GetChaves(corr, &chaves);
-		VerticedeChave(grafo, chaves[1], &vizinho);
-		VER_RemoverAresta(vizinho, corr);
+	if(lista){
+		IrInicioLista(lista);
+		while(cond != LIS_CondRetFimLista){
+			//obter valor atual
+			corr = (Aresta) (lista ? LIS_ObterValor(lista) : NULL);
+			//se nao houver a lista estara vazia. Neste caso, paramos por aqui.
+			if(!corr) break;
+			//Neste caso devemos obter o vertice destino e remover dele a aresta atual
+			VER_GetChaves(corr, &chaves);
+			VerticedeChave(grafo, chaves[1], &vizinho);
+			VER_RemoverAresta(vizinho, corr);
 
-		//pular para o proximo elemento da lista
-		cond = LIS_AvancarElementoCorrente(lista, 1);
-		if(cond == LIS_CondRetListaVazia) break;
+			//pular para o proximo elemento da lista
+			cond = LIS_AvancarElementoCorrente(lista, 1);
+			if(cond == LIS_CondRetListaVazia) break;
+		}
 	}
 
 	//reinicializar cond
 	cond = LIS_CondRetOK;
 	//repetir para os antecessores
 	VER_getAntecessores(v, &lista);
-	IrInicioLista(lista);
-	while(cond != LIS_CondRetFimLista){
-		//obter valor atual
-		corr = (Aresta) (lista ? LIS_ObterValor(lista) : NULL);
-		//se nao houver a lista estara vazia. Neste caso, paramos por aqui.
-		if(!corr) break;
-		//Neste caso devemos obter o vertice origem e remover dele a aresta atual
-		VER_GetChaves(corr, &chaves);
-		VerticedeChave(grafo, chaves[0], &vizinho);
-		VER_RemoverAresta(vizinho, corr);
+	if(lista){
+		IrInicioLista(lista);
+		while(cond != LIS_CondRetFimLista){
+			//obter valor atual
+			corr = (Aresta) (lista ? LIS_ObterValor(lista) : NULL);
+			//se nao houver a lista estara vazia. Neste caso, paramos por aqui.
+			if(!corr) break;
+			//Neste caso devemos obter o vertice origem e remover dele a aresta atual
+			VER_GetChaves(corr, &chaves);
+			VerticedeChave(grafo, chaves[0], &vizinho);
+			VER_RemoverAresta(vizinho, corr);
 
-		//pular para o proximo elemento da lista
-		cond = LIS_AvancarElementoCorrente(lista, 1);
-		if(cond == LIS_CondRetListaVazia) break;
+			//pular para o proximo elemento da lista
+			cond = LIS_AvancarElementoCorrente(lista, 1);
+			if(cond == LIS_CondRetListaVazia) break;
+		}
 	}
 
 	//finalmente removemos o vertice atual de ambas as listas de vertices. Isto automaticamente destroi o vertice.

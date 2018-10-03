@@ -1,0 +1,322 @@
+// Script:    TesteVertice.script
+// Autor:     Breno Perricone Fischer
+// Data:      29/set/2018
+// Proposito: Este script testa de forma completa, todos os tipos de retorno para cada funcao
+// de acesso da interface vertice.h. O tipo de valor do vertice eh generico, esse script ira
+// testar com valores tipo string.
+// 
+
+
+== Declarar os vertices usado
+=declararparm   inxVertice0  int 0
+=declararparm   inxVertice1  int 1
+=declararparm   inxVertice2  int 2
+=declararparm   inxVertice3  int 3
+=declararparm 	inxVertice4  int 4
+=declararparm   inxVertice9  int 9
+
+
+== Declarar as arestas usadas
+=declararparm   inxAresta0  int 0
+=declararparm   inxAresta1  int 1
+=declararparm   inxAresta2  int 2
+=declararparm   inxAresta3  int 3
+=declararparm   inxAresta4  int 4
+=declararparm 	inxAresta5  int 5
+=declararparm 	inxAresta6  int 6
+=declararparm 	inxAresta7  int 7
+=declararparm 	inxAresta8  int 8
+=declararparm   inxAresta9  int 9
+
+== Declarar os valores a serem inseridos tipo string
+=declararparm   str0    string  "abcdefg"
+=declararparm   str1    string  "qwerty"
+=declararparm   str2    string  "xxx"
+=declararparm   str3    string  "xpto"
+
+== Declarar tipos de vertice
+=declararparm 	inicial		int 0
+=declararparm 	intermediario	int 1
+=declararparm 	final 		int 2
+
+== Declarar condicoes de retorno
+=declararparm   OK                int  0
+=declararparm   VerticeNaoExiste  int  1
+=declararparm   ArestaNaoExiste   int  2
+=declararparm   ErroInsercao      int  3
+=declararparm   FaltouMemoria     int  4
+// Condicao de retorno faltou memoria nao testada nesse script
+
+
+== Inicializar o contexto
+=iniciar
+
+== Verificar comando recuperar
+=marcar 	inxVertice0	OK
+=recuperar
+
+
+
+//Conjunto de testes para aresta/vertice inexistentes
+== Inserir aresta no vertice inexistente
+=insare 	inxVertice9 	inxAresta1 	VerticeNaoExiste
+
+== Inserir aresta inexistente
+=criarver 	inxVertice0 	str0 	0 	OK
+=insare 	inxVertice0 	inxAresta9 	ArestaNaoExiste
+
+== Remover aresta, vertice nao existe
+=removare 	inxVertice9  	inxAresta1 	VerticeNaoExiste
+
+== Remover aresta, aresta inexistente
+=removare 	inxVertice0 	inxAresta9 	ArestaNaoExiste
+
+== Modificar tipo vertice quando vertice inexistente
+=modif 		inxVertice9 	0 	VerticeNaoExiste
+
+== Marcar Visitado quando vertice inexistente
+=marcar 	inxVertice9 	VerticeNaoExiste
+
+== Verificar Get Valor vertice quando vertice inexistente
+=getvalor 	inxVertice9 	str0 	VerticeNaoExiste
+
+== Get Sucessores quando vertice inexistente
+=getsucessor 	inxVertice9 	0 	VerticeNaoExiste
+
+== Get Antecessores quando vertice inexistente
+=getante 	inxVertice9 	0 	VerticeNaoExiste
+
+== Get reflexiva quando vertice inexistente
+=getrefle 	inxVertice9 	inxAresta0 	VerticeNaoExiste
+
+== Ver visitado quando vertice inexistente
+=visitado 	inxVertice9 	9 	VerticeNaoExiste
+
+== Get Chave do vertice quando vertice inexistente
+=getchave 	inxVertice9 	0 	VerticeNaoExiste
+
+== Get tipo do vertice quando vertice inexistente
+=gettipo 	inxVertice9 	0 	VerticeNaoExiste
+
+== Get chaves da aresta quando aresta inexistente
+=getchaves 	inxAresta9 	0 	0 	ArestaNaoExiste
+
+== Get rotulo da aresta quando aresta inexistente
+=getrotulo 	inxAresta9 	str1 	ArestaNaoExiste
+
+== Destruir vertice usado e resetar
+=destver 	inxVertice0
+=resetar
+
+
+
+//Conjunto de testes para criar vertice
+== Criar vertice
+=criarver 	inxVertice0 	str1 	0  	OK
+
+== Criar vertice com endereco ja existente
+=criarver 	inxVertice0 	str0 	0 	OK
+
+
+
+//Conjunto de testes para criar aresta
+== Criar aresta
+=criarare 	inxAresta0 	0 	1 	"01" 			OK
+=criarare 	inxAresta1 	1	0 	"Origem1Destino2" 	OK
+=criarare 	inxAresta2 	10 	11 	"Origem10Destino11"	OK
+=criarare 	inxAresta3 	2 	2 	"Origem2Destino2" 	OK
+
+== Criar aresta com endereco ja existente
+=criarare 	inxAresta0 	0 	1 	"01"		OK
+
+
+
+//Conjunto de testes para inserir aresta
+== Inserir aresta sem origem e destino iguais a chave do vertice
+=criarver 	inxVertice1 	str1 	1 	OK
+=insare 	inxVertice1 	inxAresta2 	ErroInsercao
+
+== Inserir aresta no vertice condicao ok
+=insare 	inxVertice0 	inxAresta0 	OK
+
+== Inserir aresta no vertice (aresta ja existe no vertice)
+=insare 	inxVertice0 	inxAresta0 	OK
+
+== Inserir aresta com origem diferente da chave do vertice
+=criarver 	inxVertice4 	str1 	4 	OK
+=criarare 	inxAresta8 	1 	4 	"Origem1Destino4" 	OK
+=insare 	inxVertice4 	inxAresta8 	OK
+
+== Inserir aresta com destino diferente da chave do vertice
+=insare 	inxVertice1 	inxAresta8 	OK
+
+
+
+//Conjunto de testes para remover aresta
+== Remover aresta, origem e destino diferentes da chave do vertice
+=removare 	inxVertice0 	inxAresta2 	ErroInsercao
+
+== Remover aresta reflexiva, com origem e destino iguais
+=criarare 	inxAresta4 	2 	2 	"Origem2Destino2" 	OK
+=criarver 	inxVertice2 	str0 	2 	OK
+=insare 	inxVertice2 	inxAresta4 	OK
+=removare 	inxVertice2 	inxAresta4 	OK
+=destare 	inxAresta4
+
+== Remover aresta origem diferente da chave do vertice
+=criarare 	inxAresta5 	8 	2 	"Origem8Destino2" 	OK
+=insare 	inxVertice2 	inxAresta5 	OK
+=removare 	inxVertice2 	inxAresta5 	OK
+=destare 	inxAresta5
+
+== Remover aresta destino diferente da chave do vertice
+=criarare 	inxAresta6 	2 	8 	"Origem2Destino8" 	OK
+=insare 	inxVertice2 	inxAresta6 	OK
+=removare 	inxVertice2 	inxAresta6 	OK
+=destare 	inxAresta6
+
+== Remover aresta origem e destino validos
+=criarare 	inxAresta7 	2 	1 	"Origem2Destino1" 	OK
+=insare 	inxVertice2 	inxAresta7 	OK
+=insare 	inxVertice1 	inxAresta7 	OK
+=removare 	inxVertice2 	inxAresta7 	OK
+=destare 	inxAresta7
+
+
+
+//Conjunto de teste para modificar tipo
+== Modificar tipo vertice quando tipo invalido
+=modif 		inxVertice1 	3 	ErroInsercao
+
+== Modificar tipo inicial condicao ok
+=modif 		inxVertice1 	0 	OK
+
+== Modificar tipo final condicao ok
+=modif 		inxVertice1 	2 	OK
+
+
+
+//Conjunto de testes para destruir aresta e vertice
+== Destruir Aresta
+=criarare 	inxAresta4 	2 	1 	"Origem2Destino1" 	OK
+=destare 	inxAresta4
+
+== Destruir vertice
+=criarver 	inxVertice3 	str0 	3 	OK
+=destver 	inxVertice3
+
+
+
+//Conjunto de testes para marcar visitado
+== Marcar visitado
+=marcar 	inxVertice2 	OK
+
+
+
+//Conjunto de testes para obter valor do vertice
+== Get valor condicao ok
+=getvalor 	inxVertice2 	str0 	OK
+
+== Get valor diferente do contido no vertice
+=getvalor 	inxVertice2 	str1	OK
+=recuperar
+
+
+
+//Conjunto de testes para obter sucessores
+== Get sucessor 0 ou 1 condicao ok
+=getsucessor 	inxVertice2 	0 	OK
+
+== Get sucessor com sucessor inesperado
+=getsucessor 	inxVertice2 	1 	OK
+=recuperar
+
+
+
+//Conjunto de testes para obter antecessores
+== Get antecessor 0 ou 1 condicao ok
+=getante 	inxVertice2 	0 	OK
+
+== Get antecessor com antecessor inesperado
+=getante 	inxVertice2 	1 	OK
+=recuperar
+
+
+
+//Conjunto de testes para obter reflexiva
+== Get reflexiva
+=insare 	inxVertice2 	inxAresta3 	OK
+=getrefle 	inxVertice2 	inxAresta3 	OK
+
+
+
+//Conjunto de testes para ver visitado
+== Ver visitado
+=visitado 	inxVertice2 	1 	OK
+
+== Ver visitado com valor diferente do esperado
+=visitado 	inxVertice2 	2 	OK
+=recuperar
+
+
+
+//Conjunto de testes para obter chave
+== Get chave
+=getchave 	inxVertice2 	2 	OK
+
+== Get chave com chave diferente do esperado
+=getchave 	inxVertice2 	1	OK
+=recuperar
+
+
+
+//Conjunto de testes para get tipo
+== Get tipo
+=gettipo 	inxVertice2 	1 	OK
+
+== Get tipo com tipo diferente do esperado
+=modif 		inxVertice2 	2 	OK
+=gettipo 	inxVertice2 	1 	OK
+=recuperar
+
+
+
+//Conjunto de testes para get chaves da aresta
+== Get chaves
+=getchaves 	inxAresta0 	0 	1 	OK
+
+== Get chaves com chave 1 diferente do esperado
+=getchaves 	inxAresta0 	1 	1 	OK
+=recuperar
+
+== Get chaves com chave 2 diferente do esperado
+=getchaves 	inxAresta0 	0 	0 	OK
+=recuperar
+
+
+
+//Conjunto de testes para get rotulo
+== Get rotulo da aresta
+=getrotulo 	inxAresta0 	"01" 	OK
+
+== Get rotulo da aresta com rotulo diferente do esperado
+=getrotulo 	inxAresta0 	str1 	OK
+=recuperar
+
+
+
+//Finalizacao do teste
+== Remover arestas dos vertices
+=removare 	inxVertice0 	inxAresta0 	OK
+=removare 	inxVertice4 	inxAresta8 	OK
+=removare 	inxVertice2 	inxAresta3 	OK
+
+== Destruir arestas usadas
+=destare 	inxAresta1
+=destare 	inxAresta2
+
+== Destruir vertices usados
+=destver 	inxVertice0
+=destver 	inxVertice1
+=destver 	inxVertice2
+=destver	inxVertice4

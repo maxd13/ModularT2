@@ -1,7 +1,9 @@
 // Script:    TesteLista.script
-// Autor:     Arndt von Staa
-// Data:      02/abr/2008
-// Propósito: Testar superficialmente o módulo lista genérica duplamente encadeada
+// Autor:     Luiz Carlos Rumbelsperger Viana
+// Data:      2/out/2018
+// Propósito: Este script testa de forma completa, todos os tipos de retorno para cada funcao
+// de acesso da interface lista.h. O tipo de valor da lista eh generico, esse script ira
+// testar com valores tipo string.
 //
 
 == Inicializar valores
@@ -18,24 +20,43 @@
 =declararparm   ListaVazia     int  1
 =declararparm   FimLista       int  2
 =declararparm   NaoAchou       int  3
-=declararparm   FaltouMemoria  int  4
+=declararparm   FaltouMemoria  int  4 //nao sera testado
 
 =declararparm   pNULL          int  0
 =declararparm   pNaoNULL       int  1
 
+==Inicializar contexto
+=resetteste
+
 == Criar a lista 0
-=criarlista      lista0 
+=criarlista      lista0
 
 == Verificar ObterValor relativo a lista vazia
 =obtervalorelem  lista0   "???"     pNULL
+
+== Excluir elemento de lista vazia
+=excluirelem     lista0             ListaVazia
+
+== Avancar elemento em lista vazia
+=avancarelem     lista0   1    ListaVazia
 
 == Inserir elemento em lista vazia
 =inselemantes    lista0   str0   OK
 =obtervalorelem  lista0   str0   pNaoNULL
 
+== Chegar ao final da lista e voltar ao inicio
+=avancarelem     lista0   1   FimLista
+=irinicio	 lista0
+
 == Inserir elemento após primeiro
 =inselemapos     lista0   str1   OK
 =obtervalorelem  lista0   str1   pNaoNULL
+
+== Ir ao inicio, avancar ao final, voltar ao inicio, ir ao final
+=irinicio	 lista0
+=avancarelem     lista0   1   OK
+=irinicio	 lista0
+=irfinal	 lista0
 
 == Inserir elemento antes do último
 =inselemantes    lista0   str2   OK

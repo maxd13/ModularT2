@@ -1,0 +1,218 @@
+// Script:    TesteGrafo.script
+// Autores:   Larissa Binatti e Luiz Carlos R. Viana
+// Data:      29/set/2018
+// Proposito: Este script testa de forma completa, todos os tipos de retorno para cada funcao
+// de acesso da interface grafo.h. O tipo de valor do vertice eh generico, esse script ira
+// testar com valores tipo string.
+// 
+
+
+== Declarar os vertices usados
+=declararparm   inxVertice0  int 0
+=declararparm   inxVertice1  int 1
+=declararparm   inxVertice2  int 2
+=declararparm   inxVertice3  int 3
+=declararparm 	inxVertice4  int 4
+=declararparm 	inxVertice5  int 5
+=declararparm   inxVertice9  int 9
+
+
+== Declarar as arestas usadas
+=declararparm   inxAresta0  int 0
+=declararparm   inxAresta1  int 1
+=declararparm   inxAresta2  int 2
+=declararparm   inxAresta3  int 3
+=declararparm   inxAresta4  int 4
+=declararparm 	inxAresta5  int 5
+=declararparm 	inxAresta6  int 6
+=declararparm 	inxAresta7  int 7
+=declararparm   inxAresta9  int 9
+
+== Declarar os valores a serem inseridos tipo string
+=declararparm   str0    string  "abcdefg"
+=declararparm   str1    string  "qwerty"
+=declararparm   str2    string  "xxx"
+=declararparm   str3    string  "xpto"
+=declararparm   str4    string  "string"
+
+== Declarar condicoes de retorno de vertice
+=declararparm   OK                int  0
+=declararparm   VerticeNaoExiste  int  1
+=declararparm   ArestaNaoExiste   int  2
+=declararparm   ErroInsercao      int  3
+=declararparm   FaltouMemoria     int  4
+
+== Declarar tipos de vertice
+=declararparm 	inicial		int 0
+=declararparm 	intermediario	int 1
+=declararparm 	final 		int 2
+
+== Declarar os grafos usados
+=declararparm   inxGrp0  int 0
+=declararparm   inxGrp1  int 1
+=declararparm   inxGrp2  int 2
+=declararparm   inxGrp3  int 3
+
+== Declarar condicoes de retorno de grafo
+=declararparm   OKGrp             int  0
+=declararparm   ErroEstrutura  	  int  1
+=declararparm   NaoExiste         int  2
+=declararparm   GrafoVazio        int  3
+=declararparm   FaltouMemGrp      int  4 //nao sera testado
+
+== Inicializar o contexto
+=iniciar
+
+== Verificar comando recuperar
+=VERmarcar 	inxVertice0	OK
+=recuperar
+
+== Destruir grafo inexistente
+=GRPdestroi inxGrp0
+
+== Inserir em grafo inexistente
+=GRPinserevertice inxGrp0 inxVertice0 NaoExiste
+=GRPinserearesta  inxGrp0 inxAresta0 NaoExiste
+
+== Remover em grafo inexistente
+=GRPremovevertice inxGrp0 inxVertice0 NaoExiste
+=GRPremovearesta inxGrp0 inxAresta0 NaoExiste
+
+== Testar VerticedeChave em grafo inexistente
+=GRPverticedechave inxGrp0 0 inxVertice0 NaoExiste
+
+==Criar 3 grafos, manter so um.
+=GRPcria inxGrp0 OKGrp
+=GRPcria inxGrp1 OKGrp
+=GRPdestroi inxGrp1
+=GRPcria inxGrp2 OKGrp
+=GRPdestroi inxGrp2
+
+== Remover em grafo vazio
+=GRPremovevertice inxGrp0 inxVertice0 GrafoVazio
+=GRPremovearesta  inxGrp0 inxAresta0  GrafoVazio
+
+== Testar VerticedeChave em grafo vazio
+=GRPverticedechave inxGrp0 0 inxVertice0 GrafoVazio
+
+== Inserir em grafo vazio
+=VERcriarver  	inxVertice0 	str0 	0  	OK
+=GRPinserevertice inxGrp0 inxVertice0 OKGrp
+=GRPinserevertice inxGrp0 inxVertice9 OKGrp //caso de vertice nulo
+
+== Insere vertice com a mesma chave
+=GRPinserevertice inxGrp0 inxVertice0 ErroEstrutura
+
+== Insere vertice com vizinho que nao existe no grafo
+=VERcriarver  	inxVertice1 	str1 	1 	OK
+=VERcriarver 	inxVertice2 	str2 	2 	OK
+=VERcriarare inxAresta0 inxVertice1 inxVertice2 "12" OK
+=VERinsare inxVertice1 inxAresta0 OK
+=GRPinserevertice inxGrp0 inxVertice1 ErroEstrutura
+
+== Insere vertice com vizinhos e nova aresta
+=GRPinserevertice inxGrp0 inxVertice2 OKGrp
+=GRPinserevertice inxGrp0 inxVertice1 OKGrp
+=VERcriarare inxAresta1 inxVertice0 inxVertice1 "01" OK
+=GRPinserearesta inxGrp0 inxAresta1 OKGrp 
+
+== Inserir arestas com vertices que nao existem no grafo
+=VERcriarare inxAresta2 inxVertice4 inxVertice5 "45" OK
+=VERcriarare inxAresta3 inxVertice1 inxVertice5 "15" OK
+=VERcriarare inxAresta4 inxVertice5 inxVertice2 "52" OK
+=GRPinserearesta inxGrp0 inxAresta2 ErroEstrutura
+=GRPinserearesta inxGrp0 inxAresta3 ErroEstrutura
+=GRPinserearesta inxGrp0 inxAresta4 ErroEstrutura
+
+== Remover arestas que nao existem no grafo
+=GRPremovearesta inxGrp0 inxAresta2 ErroEstrutura
+=GRPremovearesta inxGrp0 inxAresta3 ErroEstrutura
+=GRPremovearesta inxGrp0 inxAresta4 ErroEstrutura
+=VERdestare inxAresta2
+=VERdestare inxAresta3
+=VERdestare inxAresta4
+
+== Remover vertice que nao existe no grafo
+=VERcriarver  	inxVertice9 	str3 	9 	OK
+=GRPremovevertice inxGrp0 inxVertice9 ErroEstrutura
+
+
+== VerticedeChave
+=GRPverticedechave inxGrp0 9 inxVertice9 ErroEstrutura
+=VERdestver inxVertice9
+=GRPverticedechave inxGrp0 9 inxVertice9 ErroEstrutura
+=GRPverticedechave inxGrp0 0 inxVertice0 OKGrp
+=GRPverticedechave inxGrp0 1 inxVertice1 OKGrp
+=GRPverticedechave inxGrp0 2 inxVertice2 OKGrp
+
+== Remover aresta e vertice
+=GRPremovearesta inxGrp0 inxAresta0 OKGrp
+=GRPremovevertice inxGrp0 inxVertice0 OKGrp
+
+== Destroi e recria grafo
+=GRPdestroi inxGrp0
+=resetar
+=GRPcria inxGrp0 OKGrp
+
+//Outros testes por redundancia.
+
+==Criar 3 grafos, recriando o primeiro.
+=GRPcria inxGrp0 OKGrp
+=GRPcria inxGrp1 OKGrp
+=GRPcria inxGrp2 OKGrp
+
+== Criar vertices
+=VERcriarver  	inxVertice0 	str0 	0  	OK
+=VERcriarver  	inxVertice1 	str1 	1 	OK
+=VERcriarver 	inxVertice2 	str2 	2 	OK
+=VERcriarver 	inxVertice3 	str3 	3 	OK
+=VERcriarver 	inxVertice4 	str4 	4 	OK
+
+== Criar arestas
+=VERcriarare 	inxAresta0 	0 	1 	"Origem0Destino1" 	OK
+=VERcriarare 	inxAresta1 	1	0 	"Origem1Destino0" 	OK
+=VERcriarare 	inxAresta2 	1 	2 	"Origem1Destino2"	OK
+=VERcriarare 	inxAresta3 	2 	3 	"Origem2Destino3" 	OK
+
+
+==Inserir vertices nos grafos
+=GRPinserevertice  inxGrp0 inxVertice0 OKGrp
+=GRPinserevertice  inxGrp0 inxVertice1 OKGrp
+=GRPinserevertice  inxGrp0 inxVertice2 OKGrp
+=GRPinserevertice  inxGrp0 inxVertice3 OKGrp
+
+==Inserir vertices no grafo inexistente
+=GRPinserevertice  inxGrp3 inxVertice0 NaoExiste
+
+==Inserir vertice no grafo(vertice ja existe no grafo)
+=GRPinserevertice  inxGrp0 inxVertice0 ErroEstrutura
+
+==Inserir aresta ja existente
+=GRPinserearesta inxGrp0 inxAresta0 OKGrp
+
+==Testar vertice de chave
+=GRPverticedechave inxGrp0 1 inxVertice1 OKGrp
+
+==Testar vertice de chave de grafo vazio
+=GRPverticedechave inxGrp2 1 inxVertice1 GrafoVazio
+
+==Testar vertice de chave de grafo inexistente
+=GRPverticedechave inxGrp3 1 inxVertice1 NaoExiste
+
+==Remover vertice
+=GRPremovevertice inxGrp0 0 OKGrp
+
+==Remover vertice de grafo vazio
+=GRPremovevertice inxGrp2 0  GrafoVazio
+
+==Remover aresta
+=GRPremovearesta inxGrp0 inxAresta1 OKGrp
+
+==Remover aresta de grafo vazio
+=GRPremovevertice inxGrp2 inxAresta1  GrafoVazio
+
+==Destruir grafos
+=GRPdestroi inxGrp0
+=GRPdestroi inxGrp1
+=GRPdestroi inxGrp2
+=resetar

@@ -168,7 +168,7 @@ int pos = 0;
 
 		for(i = 0; i < 3; i++)
 		{
-			cabecalho[i] = ComandoTeste[i];
+			cabecalho[i] = ComandoTeste[i+1];
 		}
 		cabecalho[i] = '\0';
 
@@ -189,9 +189,9 @@ int pos = 0;
 			/* Efetuar Reset de teste de grafo */
 			else if (strcmp(ComandoTeste, GRP_RESET_CMD) == 0) {
 				for (i = 0; i < DIM_VT; i++)
-				{
-					if (vtAresta[i]) VER_DestruirAresta(vtAresta[i]);
-					if (vtVertice[i]) VER_DestruirVertice(vtVertice[i]);
+				{	//para evitar dangling pointers, as arestas e vertices serao destruidas apenas com a destruicao do grafo.
+					//if (vtAresta[i]) VER_DestruirAresta(vtAresta[i]);
+					//if (vtVertice[i]) VER_DestruirVertice(vtVertice[i]);
 					if (vtGrafo[i]) GRP_DestruirGrafo(&vtGrafo[i]);
 					if (StrBuffer[i]) free(StrBuffer[i]);
 					vtAresta[i] = NULL;
