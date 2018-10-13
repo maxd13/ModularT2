@@ -1,0 +1,11 @@
+Data,Horas trabalhadas,Tipo Tarefa,Descrição da Tarefa Realizada
+7/9/18,1h,estudar,"Transcrição das aulas anotadas no caderno, para o computador e estudo geral da matéria"
+8/9/18,30min,estudar,Estudo do funcionamento de scripts e como fazer um completo
+10/9/18,1h,estudar,Estudo do enunciado do trabalho e busca por ambiguidades
+15/9/18,1h,estudar,Estudo dos diversos módulos codificados e suas funcionalidades
+21/9/18,4h,codificar módulo,Criação de um novo projeto para o script de teste. Codificação de um novo módulo .c de teste do vértice
+28/9/18,2h,codificar módulo,Continuação e finalização do .c de teste do vértice
+29/9/18,3h,redigir script de teste,Criação do script de teste para o módulo de teste do vértice
+30/9/18,3h,redigir script de teste,Finalização do script de teste do módulo de teste do vértice
+02/10/18,2h,especificar as funções,Especificação das Assertivas estruturais
+02/10/18,2h30min,projetar,Criação do README.txt

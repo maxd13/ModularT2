@@ -1,0 +1,52 @@
+Professor, seguem em anexo, para proposito
+de teste de execução antes da entrega final,
+dois arquivos zip, um com o projeto no formato
+correto de entrega, faltando ainda a documentacao,
+o outro contendo o projeto inteiro, com todos os arquivos,
+incluindo os 3 projetos de visual studio. Respectivamente
+são os arquivos MT2.zip e ModularT2.zip
+
+A razão pela qual estou mandando 2 zips é a seguinte:
+Esta acontecendo um erro muito estranho em que se eu executar
+os .exe individualmente nas suas pastas de release dos respectivos projetos,
+todos os testes passam. Se no entanto eu copiar esses .exe para outra pasta (e.g. a de produto)
+os testes não passam, seja renomeando os .exe, seja mantendo o nome original, seja executando
+-os por meio dos .bat, seja executando individualmente na linha de commando, seja ainda copiando
+junto o arquivo .pdb das pastas release para a outra pasta.
+
+Mas o mais incrivel não é nem isso. Se poderia suspeitar que os .exe. estivessem referenciando
+algum arquivo gerado pelo visual studio e, quando movidos, não conseguissem mais encontrá-lo
+por não conseguir encontrar a referencia de algum caminho relativo. No entanto se esta hipotese
+estivesse correta entao todos os 3 executaveis deveriam estar errados em praticamente todos os casos
+de teste. Isto no entanto nao acontece. O executavel do primeiro projeto que foi feito, que testa a lista
+funciona exatamente da mesma forma em ambas as pastas, para os outros 2 executaveis passam a maioria
+dos testes, ate que chega em um teste especifico que nao passa para os executaveis movidos mas passa para
+os executáveis originais. Não é possível que sejamos responsabilizados por erros estranhos de cópia do windows
+ou peculiaridades do visual studio 2010!
+
+Considera ainda que nos 3 projetos foram configuradas opções de deployment. Os 3 foram marcados como release e modificamos
+as configurações conforme consta em http://www-di.inf.puc-rio.br/~bfeijo/prog2/Deployment_Visual_Studio.pdf do mesmo modo nos 3 projetos e exatamente da mesma forma que no primeiro trabalho.
+
+Por isso deixo aqui os commandos utilizados no terminal que utilizei para fazer os testes e peço que o senhor averigue
+se as mesmas coisas acontecem na sua máquina e, nesse caso, se o senhor tem alguma idéia do que pode estar acontecendo.
+O erro não pode ser da implementação uma vez que dependendo da posição dos executáveis os testes passam. Dos .bat o unico
+que funciona perfeitamente é o TesteLista.bat
+
+COMANDOS QUE FUNCIONAM NA PASTA SCRIPT
+…\Script> ..\MT2_TesteGrafo\Release\MT2_TesteGrafo.exe /sTesteGrafo
+…\Script> ..\MT2_TesteVertice\Release\MT2_TesteVertice.exe /sTesteVertice
+…\Script> ..\Release\ModularT2.exe /sTesteLista
+…\Script> ..\Produto\TRAB2-1.exe /sTesteLista
+
+COMANDOS QUE NAO FUNCIONAM NA PASTA SCRIPT
+…\Script> ..\Produto\TRAB2-2.exe /sTesteVertice
+…\Script> ..\Produto\TRAB2-3.exe /sTesteGrafo
+
+Nota: TRAB2-1 testa lista, TRAB2-2 testa vertice, e TRAB2-3 testa grafo.
+Nota: os executaveis foram convertidos para .txt para que fossem enviados por email sem problemas.
+Favor renomea-los de volta para .exe antes de executar quaisquer testes.
+
+
+Abraço,
+Luiz Carlos R. Viana
+

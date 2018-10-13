@@ -1,0 +1,9 @@
+Data,Horas trabalhadas,Tipo Tarefa,Descrição da Tarefa Realizada
+14/9/18,2hrs,estudar,ler o enunciado e interpretar o que deve ser feito
+15/9/18,2hrs,estudar,"ler instrum do trabaho 1, ler testelista e lista.c do t2"
+21/9/18,3hrs,estudar,ler .h e .c implementados e entender
+28/9/18,7hrs,codificar modulo e script,fazer o modulo TSTGRP.c e o respectivo script de teste
+29/9/18,5hrs,ajustar modulo,ajustar TSTGRP.c e juntar com modulo de testevertice e testa aresta
+30/9/18,4 hrs,estudar modelo e tentativa 1 de fazer o modelo,tentei fazer o modelo do trabalho
+1/10/18,5hrs,ajustar modulo e script,consertar erros de tstgrp e melhorar o script de teste
+02/10/18,5hrs,"ajustar modulo, script e desenho de modelo","consertar erros de tstgrp, melhorar o script de teste e aplicar mudanças dos módulos. Tentativa 2 de fazer o modelo."

@@ -1,0 +1,13 @@
+Data,Horas trabalhadas,Tipo Tarefa,Descrição da Tarefa Realizada
+7/9/18,6h,especificar os módulos,"Criação do projeto, desenvolvimento das interfaces dos modulos e configuração de deployment."
+7/9/18,10 min,projetar,Criacao desta tabela na pasta compartilhada
+7/9/18,20 min,projetar,Criação do repositório do github (https://github.com/maxd13/ModularT2)
+7/9/18,15 min,"
+diagnosticar e corrigir os problemas encontrados",Envio de emails de perguntas ao professor acerca do enunciado do trabalho
+18/9/18,6h,codificar módulo,Implementação do módulo vertice e inicio da implementação do módulo grafo.
+18/9/18,45 min,especificar os módulos,Correção de alguns detalhes das interfaces
+18/9/18,15 min,projetar,Criação de um arquivo TODO.txt das tarefas do grupo
+28/9/18,5h,codificar módulo,Termino da implementacao do modulo grafo com toda a documentacao pronta.
+2/10/18,5h,codificar módulo,"Correção dos módulos de teste e grafo, bem como dos scripts de teste feitos pelos outros integrantes do grupo. Realização dos testes e correção da implementação para que funcionasse corretamente com os testes."
+3/10/18,2h,revisar script de teste,"Refatoracao grande do script de teste de grafo, realizacao dos testes e correção da implementação até que eles passem"
+3/10/18,1h,redigir script de teste,Criação e teste do script de lista

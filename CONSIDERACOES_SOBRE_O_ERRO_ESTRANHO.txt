@@ -1,0 +1,6 @@
+Por causa do erro descrito em email.txt, resolvemos
+enviar para avaliação TODO o projeto, contendo todos os
+arquivos desenvolvidos e divisao original das pastas,
+incluindo os arquivos de solucao e configuracao do visual studio,
+no intuito de auxiliar a depuração do erro e de permitir ao avaliador
+a rapida recompilação dos códigos fonte do projeto.

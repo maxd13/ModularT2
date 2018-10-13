@@ -11,10 +11,11 @@
 *
 *  Projeto: Disciplinas INF 1628 / 1301
 *  Gestor:  DI/PUC-Rio
-*  Autores: lcrv - Luiz Carlos R Viana
+*  Autores: lcrv - Luiz Carlos R Viana, bpf - Breno Perricone Fischer
 *
 *  $HA Historico de evolucao:
 *     Versao  Autor    Data     Observacoes
+*      2     bpf    3/out/2018 criacao de assertivas de entrada e saida
 *	  1.1	  lcrv   18/9/2018 Correcao das interfaces
 *       1.0   lcrv   7/09/2018 Inicio do desenvolvimento
 *  Para maiores detalhes do historico ver controle de versao no GitHub, referenciado no LeiaMe do projeto.
@@ -82,6 +83,24 @@ GRP_tpCondRet GRP_CriarGrafo(Grafo* endereco);
 
 
 /***********************************************************************
+*	GRP Criar grafo:
+*
+*	Assertivas de entrada:
+*		- Ponteiro para endereço do grafo a ser criado, podendo ser inexistente, com tipo struct grafo.
+*
+*	Assertivas de saída:
+*		- Nada foi feito e condição de OK retornada, caso o endereço passado
+*		  inicialmente era NULL.
+*		- Grafo alocado dinamicamente, com tamanho de uma struct do tamanho de grafo,
+*		  referenciado pelo ponteiro do endereço passado inicialmente, com os respectivos valores, 
+*		  iniciados como NULL e condição de retorno OK retornada.
+*		- Grafo destruido, anteriormente referenciado pelo ponteiro de endereço passado 
+*		  como parametro, caso já existia um grafo nesse endereço e novo grafo vazio criado, com condicao de
+*		  retorno OK retornado.
+*
+***********************************************************************/
+
+/***********************************************************************
 *
 *  $FC funcao: GRP Destruir grafo
 *
@@ -95,6 +114,20 @@ GRP_tpCondRet GRP_CriarGrafo(Grafo* endereco);
 ***********************************************************************/
 
 void GRP_DestruirGrafo(Grafo* endereco);
+
+
+/***********************************************************************
+*	GRP Destruir Grafo:
+*
+*	Assertivas de entrada:
+*		- Ponteiro para grafo a ser destruido, podendo ser inexistente.
+*
+*	Assertivas de saída:
+*		- Nada foi modificado, caso grafo inexistente.
+*		- O conteudo do grafo foi destruido (a lista de origens e de vertices do grafo)
+*		  e o grafo foi anulado no ponteiro, passado como parametro.
+*
+***********************************************************************/
 
 /***********************************************************************
 *
@@ -122,6 +155,27 @@ void GRP_DestruirGrafo(Grafo* endereco);
 
 GRP_tpCondRet GRP_InserirVertice(Grafo grafo, Vertice vertice);
 
+
+/***********************************************************************
+*	GRP Inserir Vertice:
+*
+*	Assertivas de entrada:
+*		- Ponteiro para o grafo, podendo ser inexistente, no qual sera inserido o vertice.
+*		- Ponteiro para o vertice, podendo ser inexistente, o qual sera inserido.
+*
+*	Assertivas de saída:
+*		- Nada foi modificado e condição de retorno OK retornada, caso vertice inexistente.
+*		- Nada foi modificado e condição de retorno Grafo Nao Existe retornada, caso grafo inexistente.
+*		- Ponteiro do grafo para vertices referenciando a lista de vertices criada, caso o grafo nao possuia uma
+*		  lista de vertices, assim como para a lista de origens criada. Caso as listas nao tenham sido criadas corretamente,
+*		  condicao de retorno faltou memoria foi retornada.
+*		- Condicao de erro de estrutura retornada, caso a chave do vertice ja existia no grafo passado como parametro.
+*		- Condicao OK de retorno e, vertice e origem, inseridos como elemento de lista apos o elemento corrente, caso o
+*		  vertice, passado como parametro, nao possuia vizinhos.
+*		- Condicao OK de retorno e, vertice, origem e aresta, inseridos como elemento de lista no elemento corrente.
+*
+***********************************************************************/
+
 /***********************************************************************
 *
 *  $FC Funcao: GRP Inserir aresta
@@ -145,6 +199,26 @@ GRP_tpCondRet GRP_InserirVertice(Grafo grafo, Vertice vertice);
 
 GRP_tpCondRet GRP_InserirAresta(Grafo grafo, Aresta aresta);
 
+
+/***********************************************************************
+*	GRP Inserir Aresta:
+*
+*	Assertivas de entrada:
+*		- Ponteiro para o grafo, podendo ser inexistente, no qual sera inserida a aresta.
+*		- Ponteiro para a aresta, podendo ser inexistente, a qual sera inserida.
+*
+*	Assertivas de saída:
+*		- Nada foi modificado e condição de retorno OK retornada, caso aresta inexistente.
+*		- Nada foi modificado e condição de retorno Grafo Nao Existe retornada, caso grafo inexistente.
+*		- Nada foi modificado e condição de retorno OK retornada, caso par ordenado de chaves da aresta, passada como parametro,
+*		  ja existia no grafo.
+*		- Nada foi modificado e condicao de retorno Grafo Vazio retornada, caso nenhum vertice estava contido no grafo.
+*		- Condicao de erro de estrutura retornado, caso o valor contido nas chaves da aresta, passada como parametro,
+*		  nao corresponderam aos vertices contidos no grafo.
+*		- Chaves da aresta foram inseridas na origem e no destino do vertice corrente do grafo.
+*
+***********************************************************************/
+
 /***********************************************************************
 *
 *  $FC Funcao: GRP Remover vertice
@@ -162,6 +236,25 @@ GRP_tpCondRet GRP_InserirAresta(Grafo grafo, Aresta aresta);
 ***********************************************************************/
 
 GRP_tpCondRet GRP_RemoverVertice(Grafo grafo, int vertice);
+
+
+/***********************************************************************
+*	GRP Remover Vertice:
+*
+*	Assertivas de entrada:
+*		- Ponteiro para o grafo, podendo ser inexistente, no qual sera removido o vertice.
+*		- Valor inteiro representando a chave do vertice, o qual sera removido do grafo.
+*
+*	Assertivas de saída:
+*		- Nada foi modificado e condição de retorno Grafo Nao Existe retornada, caso grafo inexistente.
+*		- Nada foi modificado e condicao de retorno Grafo Vazio retornada, caso nenhum vertice estava contido no grafo.
+*		- Nada foi modificado e condicao de retorno Erro de estrutura retornada, caso a chave passada como parametro
+*		  nao referenciava nenhum vertice existente no grafo.
+*		- As arestas, com o par de chaves respectivas, da chave do vertice, passado como parametro, foram removidas,
+*		 elemento corrente da lista de vertices do grafo aponta para o anterior ou proximo, chave passada como parametro,
+*		 referenciando um vertice valido. Condicao de retorno OK retornada.
+*
+***********************************************************************/
 
 /***********************************************************************
 *
@@ -181,6 +274,24 @@ GRP_tpCondRet GRP_RemoverVertice(Grafo grafo, int vertice);
 ***********************************************************************/
 
 GRP_tpCondRet GRP_RemoverAresta(Grafo grafo, Aresta aresta);
+
+
+/***********************************************************************
+*	GRP Remover Aresta:
+*
+*	Assertivas de entrada:
+*		- Ponteiro para o grafo, podendo ser inexistente, na qual sera removida a aresta.
+*		- Ponteiro para a aresta, podendo ser inexistente, a qual sera removida.
+*
+*	Assertivas de saída:
+*		- Nada foi modificado e condição de retorno Grafo Nao Existe retornada, caso grafo inexistente.
+*		- Nada foi modificado e condicao de retorno Grafo Vazio retornada, caso nenhum vertice estava contido no grafo.
+*		- Nada foi modificado e condição de retorno OK retornada, caso aresta inexistente.
+*		- Nada foi modificado e condicao de retorno Erro de estrutura retornada, caso o par de chaves, passada como parametro,
+*		  da aresta, nao referenciava nenhum vertice existente no grafo.
+*		- A aresta foram removidas do vertice de origem e destinos respectivos e condicao de retorno OK retornada.
+*
+***********************************************************************/
 
 /***********************************************************************
 *
@@ -203,7 +314,26 @@ GRP_tpCondRet GRP_RemoverAresta(Grafo grafo, Aresta aresta);
 *	
 *
 ***********************************************************************/
+
 GRP_tpCondRet VerticedeChave(Grafo grafo, int chave, Vertice* endereco);
 
+/***********************************************************************
+*	GRP Vertice de Chave:
+*
+*	Assertivas de entrada:
+*		- Ponteiro para o grafo, podendo ser inexistente, no qual sera acessado o vertice.
+*		- Valor inteiro representando a chave do vertice, o qual sera acessado no grafo.
+*		- Ponteiro para endereco de vertice no qual sera colocado o vertice.
+*
+*	Assertivas de saída:
+*		- Nada foi modificado e condição de retorno Grafo Nao Existe retornada, caso grafo inexistente.
+*		- Nada foi modificado e condicao de retorno Grafo Vazio retornada, caso nenhum vertice estava contido no grafo.
+*		- Condicao de retorno erro de estrutura retornado e elemento corrente da lista de vertices contidos no grafo
+*		  apontando para o final da lista, caso a chave do vertice, passada como parametro, nao correspondeu
+*		  a nenhuma chave de vertice contida no grafo.
+*		- Condicao de retorno OK retornada e endereco de vertice com valor atribuido ao endereco do vertice corrente da
+*		  lista de vertices do grafo, caso a chave, passada como parametro, foi encontrada na lista de vertices do grafo.
+*
+***********************************************************************/
 
 /************************Fim da definicao do modulo Grafo*****************************/

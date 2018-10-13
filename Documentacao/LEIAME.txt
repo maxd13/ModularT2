@@ -1,0 +1,116 @@
+***********************************************
+*    Analisador léxico e Grafo em C           *
+*        com Teste Automatizado               *
+*                                             *
+*         Versão 1.0 - 02/10/2018             *
+*                                             *
+*              LEIAME.TXT                     *
+***********************************************
+
+- Apresentação do programa
+O programa apresentado demonstra os testes completos e necessários, usando o Arcabouço, de módulos, escritos em C, referentes à criação, manuseio e exibição de grafos. Os grafos são genéricos e representam um autômato finito, os vértices desse grafo, também genéricos, representam os estados do autômato e as arestas representam as transições. O programa também faz uso de listas duplamente encadeadas para formar a estrutura de vértices.
+
+
+
+
+- Instruções de uso
+Após dezipar, será gerado um diretório com todos os itens do programa.
+ATENÇÃO, foi adicionada a extensão .txt aos construtos executávéis .exe, para auxiliar no envio do projeto. Antes de tudo, retire as extensão .txt dos arquivos TRAB2-1.exe.txt, TRAB2-2.exe.txt e TRAB2-3.exe.txt.
+Para executar os itens testatudo.bat (que executa todos os testes scripts juntos) ou TesteXXX.bat (para testes específicos, sendo XXX o teste específico a ser realizado -> GRAFO, LISTA ou VERTICE), afim de realizar os testes com os scripts dos arquivos TesteXXX.script, é preciso:
+	-> Abrir um prompt de linha de comando.
+	-> A partir do diretório deste documento (LEIAME.txt), acessar o diretório que está contido o TesteXXX.bat, através do comando: cd ..\Script
+	-> Por fim executar, com o comando: TesteXXX.bat
+*Os arquivos de .log, com os resultados do teste de script serão gerados na mesma pasta.
+*O arquivo estatisticas.estat, que pode ser acusado ao executar os batches, não é gerado.
+
+
+
+
+- Estrutura de diretórios
+Ao dezipar são gerados os seguintes diretórios:
+-> Batches: contém os itens do tipo .bat, responsáveis por realizar testes versão de produção de um determinado construto com um conjunto de scripts.
+
+-> Fontes: possui os arquivos tipo fonte (de implementação .c e de definição .h), responsáveis por conter os módulos com as documentações e os códigos responsáveis pelo funcionamento do programa.
+
+-> Objetos: contém a biblioteca estática do arcabouço teste, compatível com a versão da plataforma de desenvolvimento utilizada.
+
+-> Produto: contém o(s) executável(eis) gerado(s), necessário(s) para o funcionamento do exemplo de teste.
+
+-> Scripts: possui os itens necessários para a realização dos testes de script e seus respectivos relatórios (.log).
+
+-> Documentação: contém os arquivos de documentação do projeto.
+
+
+
+
+- Arquivos de código fonte que compõem o programa
+GRAFO.C, GRAFO.H: São os módulos de implementação e de definição necessários para o funcionamento dos grafos genéricos usados no exemplo teste. Implementa um conjunto simples de funções para criar e explorar grafos, fazendo uso da lista de vértices em sua estrutura.
+
+GENERICO.H: é o módulo de definição do módulo de teste genérico do arcabouço, necessário para apoio e controle da execução de testes de módulos quaisquer.
+
+LERPARM.H: é o módulo definição do módulo de leitura e análise de comandos de teste. Todos os comandos de teste devem ser lidos com este módulo. Ele provê função de análise dos comandos de teste e permite a mistura de parâmetros literais e simbólicos (nomes declarados), tornando, assim, mais legíveis os scripts de teste.
+
+LISTA.C, LISTA.H: São os módulos de implementação e de definição necessários para o funcionamento de listas duplamente encadeadas. As listas serão utilizadas pelo módulo VERTICE.
+
+TST_ESPC.H: é o módulo de definição de todos os módulos de teste específicos que porventura venham a ser desenvolvidos, e também da especificação do tipo de condições de retorno deste módulo. O uso deste módulo de definição assegura a correta interface entre o módulo GENERICO com todos os módulos de teste específico a serem desenvolvidos.
+
+TESTLIS.C: é o módulo de teste específico para o teste do módulo LISTA. Ilustra como redigir um interpretador de comandos de teste específico, utilizando o arcabouço de teste para C.
+
+TESVER.C: é o módulo de teste específico para o teste do módulo VERTICE. Ilustra como redigir um interpretador de comandos de teste específico, utilizando o arcabouço de teste para C.
+
+TESGRP.C: é o módulo de teste específico para o teste do módulo GRAFO. Ilustra como redigir um interpretador de comandos de teste específico, utilizando o arcabouço de teste para C.
+
+VERTICE.C, VERTICE.H: São os módulos de implementação e de definição referentes ao funcionamento das estruturas vértice. Implementa um conjunto simples de funções para criar vértices e arestas de um grafo.
+
+* Os módulos GENERICO.H, LERPARM.H e TST_ESPC.H não foram modificados desde a sua última versão presente do Arcabouço, assim como a documentação correspondente, pertencentes aos seus respectivos autores.
+
+
+
+
+- Arquivos que compõem a documentação
+LEIAME.txt: é a versão eletrônica do presente documento.
+
+RELATORIO*: são os documentos com o relatório detalhado das tarefas realizadas pelos diferentes componentes do grupo.
+
+*É importante ressaltar que a documentação detalhada do projeto se encontra nos diversos módulos de definição.
+Veja também o repositório do github: https://github.com/maxd13/ModularT2
+Há também uma planilha com o conteudo dos relatorios que é mais legível,
+disponível em https://docs.google.com/spreadsheets/d/1wQ3wLtkai2TMSu1Wd8qgeIlFKQse1yAe319Ujiz2CNg/edit?usp=sharing
+
+
+
+
+- Arquivos executáveis
+São os produtos finais gerados, necessários para a realização dos testes:
+TRAB2-1.exe: É o executável responsável pela execução do teste LISTA.
+
+TRAB2-2.exe: É o executável responsável pela execução dos testes VERTICE.
+
+TRAB2-3.exe: É o executável responsável pela execução dos testes GRAFO.
+
+
+
+
+- Arquivos de diretivas de teste, Utilitários, Ferramentas
+TesteVertice.script: é o arquivo de diretiva de teste (script) que ilustra o uso do presente exemplo de teste do módulo VERTICE. Realiza teste completo do programa.
+
+TesteGrafo.script: é o arquivo de diretiva de teste (script) que ilustra o uso do presente exemplo de teste do módulo GRAFO. Realiza teste completo do programa.
+
+TesteLista.script: é o arquivo de diretiva de teste (script) que ilustra o uso do presente exemplo de teste do módulo LISTA. Realiza teste completo do programa.
+
+testatudo.bat: realiza todos os testes versão de produção de um determinado construto com o conjunto de scripts presentes na pasta "Scripts", sendo estes TesteVertice, TesteLista e TesteGrafo.
+
+TesteVertice.bat: realiza o teste versão de produção de um determinado construto com um conjunto de scripts do teste do módulo VERTICE.
+
+TesteLista.bat: realiza o teste versão de produção de um determinado construto com um conjunto de scripts do teste do módulo LISTA.
+
+TesteGrafo.bat: realiza o teste versão de produção de um determinado construto com um conjunto de scripts do teste do módulo GRAFO.
+
+Bibliotecas estáticas: 
+ArcaboucoTeste.lib: é a biblioteca estática do arcabouço teste compatível com a versão da plataforma de desenvolvimento utilizada.
+
+
+
+
+- Autores do projeto
+O projeto foi implementado por BRENO PERRICONE FISCHER, LUIZ CARLOS RUMBELSPERGER VIANA e LARISSA ALVES BINATTI, fazendo uso do Arcabouço teste, com seus direitos autorais pertencentes aos respectivos autores.
