@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdarg.h>
 #include "grafo.h"
 
 #define BUFFER_SIZE 20
@@ -27,6 +28,15 @@ void* peek(LIS_tppLista pilha){
 	IrFinalLista(pilha);
 	valor = LIS_ObterValor(pilha);
 	return valor;
+}
+
+//handler de excecoes.
+void handle(char* message, ...){
+	va_list argptr;
+	va_start(argptr, message);
+	vfprintf(stderr, message, argptr);
+	va_end(argptr);
+	exit(EXIT_FAILURE);
 }
 
 /* retorna true se o caractere acionar a opcao especificada pela string de rotulo da aresta.
@@ -68,7 +78,7 @@ char especial(char testado){
 		case 'f': return '\f';
 		case 't': return '\t';
 		case 'n': return '\n';
-		case 'r': return '\nr';
+		case 'r': return '\r';
 		default: return '\\';
 	}
 
@@ -82,7 +92,6 @@ Vertice proximo(Grafo g, LIS_tppLista sucessores, char buscado){
 	Vertice retornado = NULL;
 	char* rotulo = NULL;
 	int chaves[2];
-
 	IrInicioLista(sucessores);
 	while(cond != LIS_CondRetFimLista){
 		corr = (Aresta) LIS_ObterValor(sucessores);
@@ -90,11 +99,14 @@ Vertice proximo(Grafo g, LIS_tppLista sucessores, char buscado){
 		if(!corr) return NULL;
 		//comparar o rotulo com o caracter buscado e ver se achou.
 		VER_getRotulo(corr, &rotulo);
+		//printf("rotulo: %s, buscado: %c\n", rotulo, buscado);
+		//VER_GetChaves(corr, &chaves);
+		//printf("destino: %d\n", chaves[1]);
 		if(transicionar(rotulo, buscado)){
 			VER_GetChaves(corr, &chaves);
 			VerticedeChave(g, chaves[1], &retornado);
 			//se o rotulo tiver o caracter que indica qualquer outro comando, so podemos retornar o vertice no final.
-			if(strcmp(rotulo, "\o") != 0) return retornado;
+			if(strcmp(rotulo, "\\o") != 0) return retornado;
 		}
 
 		//pular para o proximo elemento da lista
@@ -111,6 +123,7 @@ Vertice retroceder(){
 	VER_TipoVer tipo = VER_Intermediario;
 	VER_getTipo(ret, &tipo);
 	while(tipo != VER_Final){
+		if(tipo == VER_Inicial) break;
 		pop(pilha_releitura);
 		ret = (Vertice)pop(pilha_retorno);
 		VER_getTipo(ret, &tipo);
@@ -128,18 +141,12 @@ void exibir(LIS_tppLista pilha, int index){
 	IrInicioLista(pilha);
 	while(cond != LIS_CondRetFimLista){
 		c = (char) LIS_ObterValor(pilha);
-		if(!c){
-			fprintf(stderr, "500: Erro interno da aplicação.\n");
-			exit(1);
-		}
+		if(!c) handle("500: Erro interno da aplicação.\n");
 
 		printf("%c", c);
 
 		cond = LIS_AvancarElementoCorrente(pilha, 1);
-		if(cond == LIS_CondRetListaVazia){
-			fprintf(stderr, "500: Erro interno da aplicação.\n");
-			exit(1);
-		}
+		if(cond == LIS_CondRetListaVazia) handle("500: Erro interno da aplicação.\n");
 	}
 
 	printf("\n");
@@ -160,43 +167,42 @@ void reconhecer(Grafo g, char* arquivo){
 	VER_TipoVer tipo;
 	LIS_tppLista sucessores = NULL;
 
-	if(!g || !arquivo){
-		fprintf(stderr, "500: Erro interno da aplicação.\n");
-		exit(1);
-	}
+	if(!g || !arquivo) handle("500: Erro interno da aplicação.\n");
+
 	in = fopen(arquivo, "r");
-	if(!in){
-		fprintf(stderr, "400: Erro na leitura do arquivo solicitado.\nO arquivo existe?\n");
-		exit(1);
-	}
+	if(!in) handle("400: Erro na leitura do arquivo solicitado.\nO arquivo existe?\n");
 
 	//vertice 0 eh sempre o inicial.
-	if(VerticedeChave(g, 0, &corrente) != GRP_CondRetOK){
-		fprintf(stderr, "400: Estrutura do autômato está errada.\n");
-		exit(1);
-	}
+	if(VerticedeChave(g, 0, &corrente) != GRP_CondRetOK) handle("400: Estrutura do autômato está errada.\n");
 
+	//praticamente uma assertiva isso daqui. Considerarei mudar para uma assertiva de fato no futuro.
 	VER_getTipo(corrente, &tipo);
-	if(tipo != VER_Inicial){
-		fprintf(stderr, "500: Estrutura do autômato está errada.\n");
-		exit(1);
-	}
+	if(tipo != VER_Inicial) handle("500: Estrutura do autômato está errada.\n");
 
 	printf("Iniciando o reconhecimento do arquivo %s...\n", arquivo);
 
+	//VER_getChave(corrente, &total);
+	//printf("chave: %d\n", total);
+	//total = 0;
+
 	while(!quit){
+		read = fgetc(in);
+		if(read == '\n') continue;
+
+		//printf("read: %c\n", read);
+		
 		push(pilha_retorno, corrente);
 		VER_getTipo(corrente, &tipo);
 		if(tipo == VER_Final) nfcounter = 0;
 		else nfcounter++;
 
-		read = fgetc(in);
+		
 		if(read == EOF){
 			quit = 1;
 			read = '\f';
 		}
 
-		if(read == '\\'){
+		else if(read == '\\'){
 			read = fgetc(in);
 			if(read != EOF) read = especial(read);
 			else {
@@ -207,6 +213,7 @@ void reconhecer(Grafo g, char* arquivo){
 
 		VER_getSucessores(corrente, &sucessores);
 		corrente = proximo(g, sucessores, tolower(read));
+		
 
 		if(!corrente){
 			corrente = (Vertice) peek(pilha_retorno);
@@ -216,8 +223,12 @@ void reconhecer(Grafo g, char* arquivo){
 			if(tipo != VER_Final){
 				fprintf(stderr, "Falha no reconhecimento..Continuando.\n");
 				//pular os n primeiros caracteres e tentar novamente.
-				fseek(in, loop++, SEEK_SET);
-				quit = 0;
+				if(loop <= ftell(in)){
+					if(!loop) loop++;
+					//printf("loop: %d\n", loop);
+					fseek(in, loop++, SEEK_SET);
+					quit = 0;
+				}
 			}
 			else {
 				exibir(pilha_releitura, ++total);
@@ -265,138 +276,123 @@ void reconhecer(Grafo g, char* arquivo){
 			}
 		}
 
-		if(loop == EOF){
-			fprintf(stderr, "400: Erro na leitura do arquivo solicitado.\n");
-			exit(1);
-		}
+		if(loop == EOF) handle("400: Erro na leitura do arquivo solicitado.\n");
 	}
 	
-	if(ferror(in)){
-		fprintf(stderr, "400: Erro na leitura do arquivo solicitado.\n");
-		exit(1);
-	}
+	if(ferror(in)) handle("400: Erro na leitura do arquivo solicitado.\n");
 
 	printf("Numero de lexemas reconhecidos: %d\n", total);
 	printf("finalizando o reconhecimento...\n");
-	if(fclose(in)){
-		fprintf(stderr, "500: Não foi possível fechar o arquivo aberto para reconhecimento.\n");
-		exit(1);
-	}
+	if(fclose(in)) handle("500: Não foi possível fechar o arquivo aberto para reconhecimento.\n");
+	printf("Reconhecimento finalizado com sucesso!\n");
 }
 
 Grafo lerAutomato(char* arquivo){
 	Grafo g = NULL;
-	char read;
-	//flag para saber se estamos no inicio de linha ou nao.
-	char start = 1;
-	//flag para saber se estamos em modo de leitura de key de um vertice ou rotulo de aresta.
-	char key = 1;
-	//a chave do vertice atual.
-	int chave;
-	//input buffer de strings
-	char input[BUFFER_SIZE];
-	//buffer auxiliar
-	char aux[BUFFER_SIZE];
-	//numero de caracteres lidos de uma vez.
-	char nread;
+	//chaves.
+	int origem;
+	int destino;
+	//linha lida.
+	char line[BUFFER_SIZE];
+	//token atual da linha.
+	char* token;
+	//contador de tokens.
+	char i;
+	//condicoes de retorno.
 	GRP_tpCondRet cond;
 	VER_tpCondRet vcond;
+	//vertices e arestas auxiliares.
 	Vertice corrente = NULL;
-	Vertice anterior = NULL;
+	Vertice vizinho = NULL;
+	Aresta aresta = NULL;
 	FILE* in;
 
-	if(!arquivo){
-		fprintf(stderr, "400: Erro: nenhum arquivo de especificação de autômato foi dado!\n");
-		exit(1);
-	}
+	if(!arquivo) handle("400: Erro: nenhum arquivo de especificação de autômato foi dado!\n");
+
 	in = fopen(arquivo, "r");
-	if(!in){
-		fprintf(stderr, "400: Erro na leitura do arquivo solicitado.\nO arquivo existe?\n");
-		exit(1);
-	}
+	if(!in) handle("400: Erro na leitura do arquivo solicitado.\nO arquivo existe?\n");
 
 	cond = GRP_CriarGrafo(&g);
-	if(cond == GRP_CondRetFaltouMemoria){
-		fprintf(stderr, "500: Erro interno da aplicação: falta de memória para alocar dados.\n");
-		exit(1);
-	}
+	if(cond == GRP_CondRetFaltouMemoria) handle("500: Erro interno da aplicação: falta de memória para alocar dados.\n");
 
 	printf("Iniciando a leitura do autômato no arquivo %s...\n", arquivo);
-	while((read = fgetc(in)) != EOF){
-		if(read == '\n'){
-			start = 1;
+
+	while(fgets(line, BUFFER_SIZE, in)){
+		//pular comentarios
+		if(*line == '#') {
+			//pular o resto da linha
+			if(line[strlen(line) - 1] != '\n') while(fgetc(in) != '\n');
 			continue;
 		}
-		if(isspace(read)) continue;
-		if(read == ','){
-			key = !key;
-			if(start) start = 0;
+		//pular linhas que comecam com espacos
+		//isso, como bonus, pula linhas em branco, alem de qualquer linha que teria
+		//causado um erro de leitura por comecar com leading whitespace.
+		if(isspace(*line)){
+			//pular o resto da linha
+			if(line[strlen(line) - 1] != '\n') while(fgetc(in) != '\n');
 			continue;
 		}
-		if(key){
-			nread = fscanf(in, "%[^,]", input);
-			if(nread > 0){
-				if(isdigit(read)){
-					*aux = read;
-					*(aux + 1) = '\0';
-					strcat(aux, input);
-					strcpy(input, aux);
-				}
+
+		//remover o \n do final
+		line[strcspn(line, "\n\0")] = '\0';
+		
+		//tratamento do primeiro token.
+		token = strtok(line, ",");
+		origem = atoi(isdigit(*token) ? token : token + 1);
+		if(VerticedeChave(g, origem, &corrente) != GRP_CondRetOK){
+			vcond = VER_CriarVertice(&corrente, NULL, origem, NULL);
+			if(vcond == VER_CondRetFaltouMemoria) handle("500: Erro interno da aplicação: falta de memória para alocar dados.\n");
+			cond = GRP_InserirVertice(g, corrente);
+			if(cond == GRP_CondRetFaltouMemoria) handle("500: Erro interno da aplicação: falta de memória para alocar dados.\n");
+		}
+
+		//modificacao de tipo de acordo com o primeiro caractere da linha.
+		if(!isdigit(*token)) VER_ModificarTipo(corrente, VER_Final);
+		else if(*token == '0') VER_ModificarTipo(corrente, VER_Inicial);
+
+		//tratamento dos tokens subsequentes
+		i = 1;
+		while(token = strtok(NULL, ",")){
+			if(i%2 == 0){
+				vcond = VER_CriarAresta(&aresta, origem, destino, token);
+				if(vcond == VER_CondRetFaltouMemoria) handle("500: Erro interno da aplicação: falta de memória para alocar dados.\n");
+				cond = GRP_InserirAresta(g, aresta);
+				if(cond == GRP_CondRetFaltouMemoria) handle("500: Erro interno da aplicação: falta de memória para alocar dados.\n");
+				else if(cond != GRP_CondRetOK) handle("500: Erro interno da aplicação.\n");
 			}
 			else{
-				if(!isdigit(read)){
-					fprintf(stderr, "400: Estrutura do autômato está errada.\n");
-					exit(1);
+				destino = atoi(token);
+				if(VerticedeChave(g, destino, &vizinho) != GRP_CondRetOK){
+					vizinho = NULL;
+					vcond = VER_CriarVertice(&vizinho, NULL, destino, NULL);
+					if(vcond == VER_CondRetFaltouMemoria) handle("500: Erro interno da aplicação: falta de memória para alocar dados.\n");
+					cond = GRP_InserirVertice(g, vizinho);
+					if(cond == GRP_CondRetFaltouMemoria) handle("500: Erro interno da aplicação: falta de memória para alocar dados.\n");
 				}
-				*input = read;
-				*(input+1) = '\0';
 			}
-
-			chave = atoi(input);
-			cond = VerticedeChave(g, chave, &corrente);
-			if(cond == GRP_CondRetOK){
-				if(start){
-					anterior = corrente;
-					continue;
-				}
-
-			}
-
-			vcond = VER_CriarVertice(&corrente, NULL, chave, NULL);
-			if(chave == 0) VER_ModificarTipo(corrente, VER_Inicial);
-			else if(read == 'f') VER_ModificarTipo(corrente, VER_Final);
-
-
+			i++;
 		}
-		else{
-		
-		}
-
-
 	}
 	
-	if(ferror(in)){
-		fprintf(stderr, "400: Erro na leitura do arquivo solicitado.\n");
-		exit(1);
-	}
-
-	if(fclose(in)){
-		fprintf(stderr, "500: Não foi possível fechar o arquivo aberto para leitura do autômato.\n");
-		exit(1);
-	}
+	if(ferror(in)) handle("400: Erro na leitura do arquivo solicitado.\n");
+	printf("finalizando a leitura...\n");
+	if(fclose(in)) handle("500: Não foi possível fechar o arquivo aberto para leitura do autômato.\n");
 	printf("Autômato lido com sucesso!\n");
 	return g;
 }
 
 
-int main(){
+int main(int argc, char **argv){
+	Grafo g;
+	if(argc != 3) handle("usage: %s automato.txt leitura.txt\n", argv[0]);
+	
+	printf("Iniciando Reconhecedor Léxico de Modular.\n");
 	pilha_releitura = LIS_CriarLista(NULL);
 	pilha_retorno = LIS_CriarLista(NULL);
-	if(!pilha_retorno || ! pilha_releitura){
-		fprintf(stderr, "500: Erro interno da aplicação: falta de memória para alocar dados.\n");
-		exit(1);
-	}
+	if(!pilha_retorno || ! pilha_releitura) handle("500: Erro interno da aplicação: falta de memória para alocar dados.\n");
+	g = lerAutomato(argv[1]);
+	reconhecer(g, argv[2]);
 
-
+	printf("Fim da execução do reconhecedor.\n");
 	return 0;
 }
