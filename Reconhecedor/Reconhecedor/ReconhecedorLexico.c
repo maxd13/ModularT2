@@ -1,3 +1,41 @@
+/***************************************************************************
+*
+*  $MCD Modulo de implementacao: Modulo Reconhecedor Lexico
+*
+*  Arquivo gerado:              ReconhecedorLexico.C
+*  Letras identificadoras:      Nao se aplica (nao e' um TAD).
+*
+*  Nome da base de software:    Terceiro Trabalho de Programacao Modular
+*
+*  Projeto: Disciplinas INF 1628 / 1301
+*  Gestor:  DI/PUC-Rio
+*  Autores: lcrv - Luiz Carlos R Viana
+*
+*  $HA Historico de evolucao:
+*     Versao  Autor    Data     Observacoes
+*	  2.0	  lcrv   2/11/2018  Termino do desenvolvimento
+*       1.0   lcrv   19/10/2018 Inicio do desenvolvimento
+*  Para maiores detalhes do historico ver controle de versao no GitHub, referenciado no LeiaMe do projeto.
+*
+*  $ED Descricao do modulo
+*     Este modulo implementa um Reconhecedor lexico. 
+*	O reconhecedor deve ser executado pela linha de comando,
+*	sendo passados dois parametros. 
+*
+*	O primeiro parametro e' o caminho do arquivo texto contendo a 
+*	representacao do automato esperada por esta aplicacao.
+*	O segundo parametro deve ser o caminho do arquivo texto
+*	que deve ser reconhecido pelo automato. O formato esperado para
+*	o arquivo de descricao do automato, pode ser encontrado no arquivo de
+*	exemplo modular_automato.txt.
+*	
+*	Um arquivo de log, Reconhecedor.log, e' gerado na mesma pasta do executavel
+*	e contem informacoes sobre os caracteres lidos um a um, e tambem sobre falhas
+*	de reconhecimento.
+*
+*
+***************************************************************************/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
@@ -7,9 +45,12 @@
 
 #define BUFFER_SIZE 20
 
+/* VARIAVEIS GLOBAIS */
+
 static LIS_tppLista pilha_releitura;
 static LIS_tppLista pilha_retorno;
 
+/* FUNCOES DE UTILIDADE */
 void push(LIS_tppLista pilha, void* valor){
 	IrFinalLista(pilha);
 	LIS_InserirElementoApos(pilha, valor);
@@ -38,6 +79,8 @@ void handle(char* message, ...){
 	va_end(argptr);
 	exit(EXIT_FAILURE);
 }
+
+/* FUNCOES AUXILIARES */
 
 /* retorna true se o caractere acionar a opcao especificada pela string de rotulo da aresta.
  os rotulos seguem o regex (\\[tnrldbo]|[a-z])(\|\|(\\[tnrldbo]|[a-z]))* */
@@ -70,7 +113,7 @@ char transicionar(char* rotulo, char buscado){
 	if(strncmp("||", rotulo, 2) == 0) return transicionar(rotulo+2, buscado);
 
 	//verificacao de um caracter literal.
-	return *rotulo == buscado || transicionar(rotulo+2, buscado);
+	return *rotulo == buscado || transicionar(rotulo+1, buscado);
 }
 
 char especial(char testado){
@@ -86,12 +129,26 @@ char especial(char testado){
 	return -1;
 }
 
-Vertice proximo(Grafo g, LIS_tppLista sucessores, char buscado){
+//retorna o proximo vertice/estado do automato para qual o reconhecedor deve se mover ao ler o caractere buscado, ou NULL caso nao haja transicao para este caracter.
+Vertice proximo(Grafo g, LIS_tppLista sucessores, Aresta reflexiva, char buscado){
 	LIS_tpCondRet cond = LIS_CondRetOK;
 	Aresta corr;
 	Vertice retornado = NULL;
 	char* rotulo = NULL;
 	int chaves[2];
+	if(!sucessores && !reflexiva) return NULL;
+	if(reflexiva){
+		//comparar o rotulo com o caracter buscado e ver se achou.
+		VER_getRotulo(reflexiva, &rotulo);
+		if(transicionar(rotulo, buscado)){
+			VER_GetChaves(reflexiva, &chaves);
+			VerticedeChave(g, chaves[1], &retornado);
+			//se o rotulo tiver o caracter que indica qualquer outro comando, so podemos retornar o vertice no final.
+			if(strcmp(rotulo, "\\o") != 0) return retornado;
+		}
+		rotulo = NULL;
+	}
+	if(!sucessores) return retornado;
 	IrInicioLista(sucessores);
 	while(cond != LIS_CondRetFimLista){
 		corr = (Aresta) LIS_ObterValor(sucessores);
@@ -99,11 +156,9 @@ Vertice proximo(Grafo g, LIS_tppLista sucessores, char buscado){
 		if(!corr) return NULL;
 		//comparar o rotulo com o caracter buscado e ver se achou.
 		VER_getRotulo(corr, &rotulo);
-		//printf("rotulo: %s, buscado: %c\n", rotulo, buscado);
-		//VER_GetChaves(corr, &chaves);
-		//printf("destino: %d\n", chaves[1]);
 		if(transicionar(rotulo, buscado)){
 			VER_GetChaves(corr, &chaves);
+			retornado = NULL;
 			VerticedeChave(g, chaves[1], &retornado);
 			//se o rotulo tiver o caracter que indica qualquer outro comando, so podemos retornar o vertice no final.
 			if(strcmp(rotulo, "\\o") != 0) return retornado;
@@ -152,13 +207,15 @@ void exibir(LIS_tppLista pilha, int index){
 	printf("\n");
 }
 
-void reconhecer(Grafo g, char* arquivo){
+/* FUNCOES PRINCIPAIS */
+
+void reconhecer(Grafo g, char* arquivo, FILE* logfile){
 	FILE* in;
 	char read;
 	//contador nao-final: conta o numero de vertices nao finais desde o ultimo vertice final.
 	int nfcounter = 0;
 	//usado para pular letras depois de uma falha de reconhecimento, e em geral para marcar a posicao do file pointer no arquivo.
-	long int loop = 0;
+	long int loop = 1;
 	//numero total de lexemas reconhecidos.
 	int total = 0;
 	//booleano de condicao de parada para o while.
@@ -166,6 +223,7 @@ void reconhecer(Grafo g, char* arquivo){
 	Vertice corrente = NULL;
 	VER_TipoVer tipo;
 	LIS_tppLista sucessores = NULL;
+	Aresta reflexiva = NULL;
 
 	if(!g || !arquivo) handle("500: Erro interno da aplicação.\n");
 
@@ -175,21 +233,15 @@ void reconhecer(Grafo g, char* arquivo){
 	//vertice 0 eh sempre o inicial.
 	if(VerticedeChave(g, 0, &corrente) != GRP_CondRetOK) handle("400: Estrutura do autômato está errada.\n");
 
-	//praticamente uma assertiva isso daqui. Considerarei mudar para uma assertiva de fato no futuro.
+	//praticamente uma assertiva isso daqui. Considerarei mudar para um assert de fato no futuro.
 	VER_getTipo(corrente, &tipo);
 	if(tipo != VER_Inicial) handle("500: Estrutura do autômato está errada.\n");
 
 	printf("Iniciando o reconhecimento do arquivo %s...\n", arquivo);
 
-	//VER_getChave(corrente, &total);
-	//printf("chave: %d\n", total);
-	//total = 0;
-
 	while(!quit){
 		read = fgetc(in);
 		if(read == '\n') continue;
-
-		//printf("read: %c\n", read);
 		
 		push(pilha_retorno, corrente);
 		VER_getTipo(corrente, &tipo);
@@ -207,12 +259,13 @@ void reconhecer(Grafo g, char* arquivo){
 			if(read != EOF) read = especial(read);
 			else {
 				read = '\\';
-				fseek(in, -1, SEEK_CUR);
+				fseek(in, -1, SEEK_END);
 			}
 		}
 
 		VER_getSucessores(corrente, &sucessores);
-		corrente = proximo(g, sucessores, tolower(read));
+		VER_getReflexiva(corrente, &reflexiva);
+		corrente = proximo(g, sucessores, reflexiva, tolower(read));
 		
 
 		if(!corrente){
@@ -221,17 +274,16 @@ void reconhecer(Grafo g, char* arquivo){
 			if(tipo != VER_Final) corrente = retroceder();
 			VER_getTipo(corrente, &tipo);
 			if(tipo != VER_Final){
-				fprintf(stderr, "Falha no reconhecimento..Continuando.\n");
+				fprintf(logfile, "Falha no reconhecimento lendo caracter: %c\n", read);
 				//pular os n primeiros caracteres e tentar novamente.
 				if(loop <= ftell(in)){
-					if(!loop) loop++;
-					//printf("loop: %d\n", loop);
 					fseek(in, loop++, SEEK_SET);
 					quit = 0;
 				}
 			}
 			else {
 				exibir(pilha_releitura, ++total);
+				fprintf(logfile, "Sucesso no reconhecimento! Ultimo caracter lido: %c\n", read);
 				if(nfcounter){
 					fseek(in, -nfcounter, SEEK_CUR);
 					quit = 0;
@@ -251,17 +303,16 @@ void reconhecer(Grafo g, char* arquivo){
 				if(tipo != VER_Final) corrente = retroceder();
 				VER_getTipo(corrente, &tipo);
 				if(tipo != VER_Final){
-					fprintf(stderr, "Falha no reconhecimento..Continuando.\n");
+					fprintf(logfile, "Falha no reconhecimento lendo caracter: %c\n", read);
 					//pular os n primeiros caracteres e tentar novamente.
-					fseek(in, loop++, SEEK_SET);
-					LIS_EsvaziarLista(pilha_releitura);
-					LIS_EsvaziarLista(pilha_retorno);
-					VerticedeChave(g, 0, &corrente);
-					nfcounter = 0;
-					quit = 0;	
+					if(loop <= ftell(in)){
+						fseek(in, loop++, SEEK_SET);
+						quit = 0;
+					}	
 				}
 				else {
 					exibir(pilha_releitura, ++total);
+					fprintf(logfile, "Sucesso no reconhecimento! Ultimo caracter lido: %c\n", read);
 					if(nfcounter){
 						fseek(in, -nfcounter, SEEK_CUR);
 						quit = 0;
@@ -340,6 +391,7 @@ Grafo lerAutomato(char* arquivo){
 		token = strtok(line, ",");
 		origem = atoi(isdigit(*token) ? token : token + 1);
 		if(VerticedeChave(g, origem, &corrente) != GRP_CondRetOK){
+			corrente = NULL;
 			vcond = VER_CriarVertice(&corrente, NULL, origem, NULL);
 			if(vcond == VER_CondRetFaltouMemoria) handle("500: Erro interno da aplicação: falta de memória para alocar dados.\n");
 			cond = GRP_InserirVertice(g, corrente);
@@ -354,6 +406,7 @@ Grafo lerAutomato(char* arquivo){
 		i = 1;
 		while(token = strtok(NULL, ",")){
 			if(i%2 == 0){
+				aresta = NULL;
 				vcond = VER_CriarAresta(&aresta, origem, destino, token);
 				if(vcond == VER_CondRetFaltouMemoria) handle("500: Erro interno da aplicação: falta de memória para alocar dados.\n");
 				cond = GRP_InserirAresta(g, aresta);
@@ -384,6 +437,7 @@ Grafo lerAutomato(char* arquivo){
 
 int main(int argc, char **argv){
 	Grafo g;
+	FILE* log;
 	if(argc != 3) handle("usage: %s automato.txt leitura.txt\n", argv[0]);
 	
 	printf("Iniciando Reconhecedor Léxico de Modular.\n");
@@ -391,8 +445,14 @@ int main(int argc, char **argv){
 	pilha_retorno = LIS_CriarLista(NULL);
 	if(!pilha_retorno || ! pilha_releitura) handle("500: Erro interno da aplicação: falta de memória para alocar dados.\n");
 	g = lerAutomato(argv[1]);
-	reconhecer(g, argv[2]);
+
+	log = fopen("Reconhecedor.log", "w");
+	if(!log) handle("500: Erro na abertura do arquivo de log.\n");
+	reconhecer(g, argv[2], log);
+	if(fclose(log)) handle("500: Não foi possível fechar o arquivo de log da aplicacao.\n");
 
 	printf("Fim da execução do reconhecedor.\n");
 	return 0;
 }
+
+//EoF.
